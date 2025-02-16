@@ -1,0 +1,128 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.App {
+  text-align: center;
+}
+
+.main-layout {
+  display: flex;
+}
+
+.container {
+  flex: 1;
+  padding: 20px;
+}
+
+.side-menu {
+  width: 200px;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.side-menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.side-menu li {
+  padding: 10px 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.side-menu li.active {
+  font-weight: bold;
+  font-size: 16px;
+}
+.side-menu {
+    width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .side-menu.open {
+    transform: translateX(0);
+  }
+  
+  .side-menu .tree {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .side-menu .tree li {
+    margin: 10px 0;
+  }
+  
+  .side-menu .tree li span {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px; /* Make the font bigger */
+    text-align: left; /* Align text to the left */
+    display: block; /* Ensure the span takes the full width */
+  }
+  
+  .side-menu .tree li ul {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: 5px;
+    margin-left: 15px;
+  }
+  
+  .side-menu .tree li ul li {
+    margin: 5px 0;
+  }
+  
+  .side-menu .tree li ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: left; /* Ensure submenu text is left-aligned */
+    padding-left: 20px; /* Add padding to move text two spaces to the right */
+  }
+  
+  .side-menu .tree li ul li a.disabled {
+    color: #777;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  
+  .side-menu .tree li ul li a.active {
+    font-weight: bold; /* Make the active menu item bold */
+  }
+  
+  .side-menu .tree li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  
+  .collapsible {
+    cursor: pointer;
+  }
+  
+  .nested {
+    display: block;
+  }
+  
+  .collapsed {
+    display: none;
+  }
+.menu-open {
+  margin-left: 200px;
+}

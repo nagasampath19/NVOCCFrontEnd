@@ -1,63 +1,91 @@
 import React, { useState } from "react";
-import Header from "./components/Header";
-import SideMenu from "./components/SideMenu";
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import Login from "./components/Login";
 import ShipperDetails from "./components/ShipperDetails";
 import ConsigneeDetails from "./components/ConsigneeDetails";
 import NotifyParties from "./components/NotifyParties";
 import ShipmentDetails from "./components/ShipmentDetails";
-import CarrierDetails from "./components/CarrierDetails";
-import "./App.css";
+import VesselDetails from "./components/VesselDetails";
+import SideMenu from "./components/SideMenu";
+import Header from "./components/Header";
+import "./css/App.css";
+import axios from 'axios';
 
-const App = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [completedSteps, setCompletedSteps] = useState(new Set());
+const AppLayout = ({ children }) => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/";
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const showStep = (step) => {
-    if (step > currentStep && !completedSteps.has(step - 1)) {
-      alert("Please complete the current step before proceeding.");
-      return;
-    }
-    setCurrentStep(step);
-    setIsMenuOpen(false); // Close menu on step change
-  };
-
-  const nextStep = (step) => {
-    if (step < 5) {
-      setCompletedSteps((prev) => new Set([...prev, step]));
-      setCurrentStep(step + 1);
-    }
-  };
-
-  const prevStep = (step) => {
-    if (step > 1) {
-      setCurrentStep(step - 1);
-    }
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLogout = () => {
+    const token = localStorage.getItem("token");
+    axios.post('http://localhost:8081/api/auth/logout', {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      localStorage.removeItem("token");
+      navigate("/");
+    })
+    .catch(error => {
+      console.error('Error logging out', error);
+    });
+  };
+
+  const showStep = (step) => {
+    switch (step) {
+      case 1:
+        navigate("/shipper-details");
+        break;
+      case 2:
+        navigate("/consignee-details");
+        break;
+      case 3:
+        navigate("/notify-parties");
+        break;
+      case 4:
+        navigate("/shipment-details");
+        break;
+      case 5:
+        navigate("/vessel-details");
+        break;
+      default:
+        navigate("/shipper-details");
+    }
+  };
+
   return (
     <div className="App">
-      <Header toggleMenu={toggleMenu} />
+      {!isLoginPage && <Header toggleMenu={toggleMenu} handleLogout={handleLogout} />}
       <div className="main-layout">
-        <SideMenu
-          currentStep={currentStep}
-          showStep={showStep}
-          completedSteps={completedSteps}
-          isMenuOpen={isMenuOpen}
-        />
-        <main className={`container ${isMenuOpen ? "menu-open" : ""}`}>
-          {currentStep === 1 && <ShipperDetails nextStep={nextStep} />}
-          {currentStep === 2 && <ConsigneeDetails nextStep={nextStep} prevStep={prevStep} />}
-          {currentStep === 3 && <NotifyParties nextStep={nextStep} prevStep={prevStep} />}
-          {currentStep === 4 && <ShipmentDetails nextStep={nextStep} prevStep={prevStep} />}
-          {currentStep === 5 && <CarrierDetails prevStep={prevStep} />}
+        {!isLoginPage && <SideMenu showStep={showStep} currentPath={location.pathname} isMenuOpen={isMenuOpen} />}
+        <main className="container">
+          {children}
         </main>
       </div>
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/shipper-details" element={<ShipperDetails />} />
+          <Route path="/consignee-details" element={<ConsigneeDetails />} />
+          <Route path="/notify-parties" element={<NotifyParties />} />
+          <Route path="/shipment-details" element={<ShipmentDetails />} />
+          <Route path="/vessel-details" element={<VesselDetails />} />
+        </Routes>
+      </AppLayout>
+    </Router>
   );
 };
 

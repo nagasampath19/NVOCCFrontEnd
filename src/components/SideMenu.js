@@ -1,33 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
-const SideMenu = ({ currentStep, showStep, completedSteps,isMenuOpen  }) => {
+const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
+
+  const getActiveClass = (path) => {
+    return currentPath === path ? "active" : "";
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <aside className={`side-menu ${isMenuOpen ? "open" : ""}`}>
+    <nav className={`side-menu ${isMenuOpen ? "open" : ""}`}>
       <ul className="tree">
         <li>
-          <span>Bill of Lading</span>
-          <ul>
-            {[1, 2, 3, 4, 5].map((step) => (
-              <li key={step}>
-                <a
-                  href="#"
-                  className={`${step > currentStep ? "disabled" : ""} ${
-                    step === currentStep ? "active" : ""
-                  }`}
-                  onClick={() => showStep(step)}
-                >
-                  {step === 1 && "Shipper Details"}
-                  {step === 2 && "Consignee Details"}
-                  {step === 3 && "Notify Parties"}
-                  {step === 4 && "Shipment Details"}
-                  {step === 5 && "Carrier Details"}
-                </a>
-              </li>
-            ))}
+          <span onClick={toggleCollapse} className="collapsible">
+            {isCollapsed ? "▶" : "▼"} BL Management
+          </span>
+          <ul className={`nested ${isCollapsed ? "collapsed" : ""}`}>
+            <li className={getActiveClass("/shipper-details")} onClick={() => showStep(1)}>Shipper Details</li>
+            <li className={getActiveClass("/consignee-details")} onClick={() => showStep(2)}>Consignee Details</li>
+            <li className={getActiveClass("/notify-parties")} onClick={() => showStep(3)}>Notify Parties</li>
+            <li className={getActiveClass("/shipment-details")} onClick={() => showStep(4)}>Shipment Details</li>
+            <li className={getActiveClass("/vessel-details")} onClick={() => showStep(5)}>Vessel Details</li>
           </ul>
         </li>
       </ul>
-    </aside>
+    </nav>
   );
 };
 

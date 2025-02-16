@@ -2,24 +2,24 @@ import React from "react";
 
 const NameAndAddressDetails = ({ 
     prefix, 
-    onFNameChange, 
-    onLNameChange,
+    onNameChange,
     onAddress1Change,
     onAddress2Change,
     onCityChange,
     onStateChange,
     onCountryChange,
     onEmailChange,
-    onPhoneChange
+    onPhoneChange,
+    onPinCodeChange,
+    name,
+    address
  }) => {
     return (
         <div>
-             <label htmlFor={`${prefix}FName`}>First Name</label>
-            <input type="text" id={`${prefix}FName`} onChange={(e) => onFNameChange(e.target.value)}/>
-            <label htmlFor={`${prefix}LName`}>Last Name</label>
-            <input type="text" id={`${prefix}FName`} onChange={(e) => onLNameChange(e.target.value)} required />
+            <label htmlFor={`${prefix}Name`}>Name</label>
+            <input type="text" id={`${prefix}Name`} value={name} onChange={(e) => onNameChange(e.target.value)} required />
             <label htmlFor={`${prefix}Address1`}>Address 1</label>
-            <input type="text" id={`${prefix}Address1`} onChange={(e) => onAddress1Change(e.target.value)} required />
+            <input type="text" id={`${prefix}Address1`} value={address} onChange={(e) => onAddress1Change(e.target.value)} required />
             <label htmlFor={`${prefix}Address2`}>Address 2</label>
             <input type="text" id={`${prefix}Address2`} onChange={(e) => onAddress2Change(e.target.value)} />
             <label htmlFor={`${prefix}City`}>City</label>
@@ -32,6 +32,8 @@ const NameAndAddressDetails = ({
             <input type="text" id={`${prefix}Email`} onChange={(e) => onEmailChange(e.target.value)}/>
             <label htmlFor={`${prefix}Phone`}>Phone</label>
             <input type="text" id={`${prefix}Phone`}onChange={(e) => onPhoneChange(e.target.value)} />
+            <label htmlFor={`${prefix}PinCode`}>Pin Code</label>
+            <input type="text" id={`${prefix}PinCode`}onChange={(e) => onPinCodeChange(e.target.value)} />
         </div>
     );
 };
