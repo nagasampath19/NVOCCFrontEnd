@@ -1,58 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import NameAndAddress from "./NameAndAddressDetails";
 import { useNavigate } from "react-router-dom";
+import { updateShipperDetails } from "../redux/actions/shipperActions";
 
 const ShipperDetails = () => {
-  const [shipperName, setShipperName] = useState("");
-  const [shipperAddress1, setShipperAddress1] = useState("");
-  const [shipperAddress2, setShipperAddress2] = useState("");
-  const [shipperCity, setShipperCity] = useState("");
-  const [shipperState, setShipperState] = useState("");
-  const [shipperCountry, setShipperCountry] = useState("");
-  const [shipperEmail, setShipperEmail] = useState("");
-  const [shipperPhone, setShipperPhone] = useState("");
-  const [shipperPinCode, setShipperPinCode] = useState("");
-  const [shipperCIN, setShipperCIN] = useState("");
+  const dispatch = useDispatch();
+  const ShipperDetails = useSelector((state) => state.shipping);
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
- 
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(updateShipperDetails({ [name]: value }));
+  };
 
   const validate = () => {
     const newErrors = {};
-    if (!shipperName) newErrors.name = "Name is required";
-    if (!shipperAddress1) newErrors.address1 = "Address 1 is required";
-    if (!shipperCity) newErrors.city = "City is required";
-    if (!shipperState) newErrors.state = "State is required";
-    if (!shipperCountry) newErrors.country = "Country is required";
-    if (!shipperEmail) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(shipperEmail)) {
-      newErrors.email = "Email address is invalid";
+    if (!ShipperDetails.shipperName) newErrors.shipperName = "Name is required";
+    if (!ShipperDetails.shipperAddress1) newErrors.shipperAddress1 = "Address 1 is required";
+    if (!ShipperDetails.shipperCity) newErrors.shipperCity = "City is required";
+    if (!ShipperDetails.shipperState) newErrors.shipperState = "State is required";
+    if (!ShipperDetails.shipperCountry) newErrors.shipperCountry = "Country is required";
+    if (!ShipperDetails.shipperEmail) {
+      newErrors.shipperEmail = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(ShipperDetails.shipperEmail)) {
+      newErrors.shipperEmail = "Email address is invalid";
     }
-    if (!shipperPinCode) newErrors.pinCode = "Pin Code is required";
+    if (!ShipperDetails.shipperPinCode) newErrors.shipperPinCode = "Pin Code is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const createShipping = () => {
     const token = localStorage.getItem("token");
-    const shippingData = {
-      shipperName: shipperName,
-      shipperAddress1: shipperAddress1,
-      shipperAddress2: shipperAddress2,
-      shipperCity: shipperCity,
-      shipperState: shipperState,
-      shipperCountry: shipperCountry,
-      shipperEmail: shipperEmail,
-      shipperPhone: shipperPhone,
-      shipperPinCode: shipperPinCode,
-      shipperCIN: shipperCIN
-    };
-
-    axios.post('http://localhost:9090/shipping/create', shippingData, {
+    axios.post('http://localhost:9090/blapi/shipping/create', ShipperDetails, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -62,7 +46,12 @@ const ShipperDetails = () => {
       navigate("/consignee-details");
     })
     .catch(error => {
-      console.error('Error creating shipping', error);
+      if(error.response && error.response.status === 403) {
+        navigate("/");
+      }
+      if(error.response && error.response.status === 401) {
+        navigate("/");
+      }
     });
   };
 
@@ -95,18 +84,27 @@ const ShipperDetails = () => {
         <h2>Shipper Details</h2>
         <NameAndAddress
           prefix="shipper"
-          onNameChange={setShipperName}
-          onAddress1Change={setShipperAddress1}
-          onAddress2Change={setShipperAddress2}
-          onCityChange={setShipperCity}
-          onStateChange={setShipperState}
-          onCountryChange={setShipperCountry}
-          onEmailChange={setShipperEmail}
-          onPhoneChange={setShipperPhone}
-          onPinCodeChange={setShipperPinCode}
+          onNameChange={onChange}
+          onAddress1Change={onChange}
+          onAddress2Change={onChange}
+          onCityChange={onChange}
+          onStateChange={onChange}
+          onCountryChange={onChange}
+          onEmailChange={onChange}
+          onPhoneChange={onChange}
+          onPinCodeChange={onChange}
+          name={ShipperDetails.shipperName}
+          address1={ShipperDetails.shipperAddress1}
+          address2={ShipperDetails.shipperAddress2}
+          city={ShipperDetails.shipperCity}
+          state={ShipperDetails.shipperState}
+          country={ShipperDetails.shipperCountry}
+          email={ShipperDetails.shipperEmail}
+          phone={ShipperDetails.shipperPhone}
+          pinCode={ShipperDetails.shipperPinCode}
         />
         <label htmlFor="shipperCIN">CIN</label>
-        <input type="text" id="shipperCIN" value={shipperCIN} onChange={(e) => setShipperCIN(e.target.value)} required />
+        <input type="text" id="shipperCIN" name="shipperCIN" value={ShipperDetails.shipperCIN} onChange={onChange} required />
         <div className="firstnavigation">
           <button type="button" className="next" onClick={nextStep}>
             Next
@@ -116,8 +114,7 @@ const ShipperDetails = () => {
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-            <button className="close-button" onClick={closeModal}>&times;</button>
-            <h3>Missing Fields</h3>
+            <h3>Enter missing fields</h3>
             <ul>
               {Object.keys(errors).map((key) => (
                 <li key={key}>{errors[key]}</li>
