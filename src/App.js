@@ -12,7 +12,7 @@ import SideMenu from "./components/SideMenu";
 import Header from "./components/Header";
 import "./css/App.css";
 import axios from 'axios';
-
+import { API_URLS } from "./config/urls";
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -26,7 +26,7 @@ const AppLayout = ({ children }) => {
 
   const handleLogout = () => {
     const token = localStorage.getItem("token");
-    axios.post('http://localhost:8081/api/auth/logout', {}, {
+    axios.post(API_URLS.LOGOUT, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

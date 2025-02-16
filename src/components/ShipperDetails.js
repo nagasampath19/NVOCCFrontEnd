@@ -4,6 +4,7 @@ import axios from "axios";
 import NameAndAddress from "./NameAndAddressDetails";
 import { useNavigate } from "react-router-dom";
 import { updateShipperDetails } from "../redux/actions/shipperActions";
+import { API_URLS } from "../config/urls";
 
 const ShipperDetails = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const ShipperDetails = () => {
 
   const createShipping = () => {
     const token = localStorage.getItem("token");
-    axios.post('http://localhost:9090/blapi/shipping/create', ShipperDetails, {
+    axios.post(API_URLS.CREATE_SHIPPING, ShipperDetails, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
