@@ -1,4 +1,5 @@
 import React from "react";
+import "../css/common.css";
 
 const NameAndAddress = ({
   prefix,
@@ -30,7 +31,7 @@ const NameAndAddress = ({
           id={`${prefix}Name`}
           name={`${prefix}Name`}
           value={name}
-          onChange={onNameChange}
+          onChange={(e) => onNameChange(e)}
           required
         />
       </div>
@@ -41,7 +42,7 @@ const NameAndAddress = ({
           id={`${prefix}Address1`}
           name={`${prefix}Address1`}
           value={address1}
-          onChange={onAddress1Change}
+          onChange={(e) => onAddress1Change(e)}
           required
         />
       </div>
@@ -52,7 +53,7 @@ const NameAndAddress = ({
           id={`${prefix}Address2`}
           name={`${prefix}Address2`}
           value={address2}
-          onChange={onAddress2Change}
+          onChange={(e) => onAddress2Change(e)}
         />
       </div>
       <div className="form-group">
@@ -62,7 +63,7 @@ const NameAndAddress = ({
           id={`${prefix}City`}
           name={`${prefix}City`}
           value={city}
-          onChange={onCityChange}
+          onChange={(e) => onCityChange(e)}
           required
         />
       </div>
@@ -73,7 +74,7 @@ const NameAndAddress = ({
           id={`${prefix}State`}
           name={`${prefix}State`}
           value={state}
-          onChange={onStateChange}
+          onChange={(e) => onStateChange(e)}
           required
         />
       </div>
@@ -84,7 +85,7 @@ const NameAndAddress = ({
           id={`${prefix}Country`}
           name={`${prefix}Country`}
           value={country}
-          onChange={onCountryChange}
+          onChange={(e) => onCountryChange(e)}
           required
         />
       </div>
@@ -95,7 +96,7 @@ const NameAndAddress = ({
           id={`${prefix}Email`}
           name={`${prefix}Email`}
           value={email}
-          onChange={onEmailChange}
+          onChange={(e) => onEmailChange(e)}
           required
         />
       </div>
@@ -106,7 +107,7 @@ const NameAndAddress = ({
           id={`${prefix}Phone`}
           name={`${prefix}Phone`}
           value={phone}
-          onChange={onPhoneChange}
+          onChange={(e) => onPhoneChange(e)}
           required
         />
       </div>
@@ -117,7 +118,7 @@ const NameAndAddress = ({
           id={`${prefix}PinCode`}
           name={`${prefix}PinCode`}
           value={pinCode}
-          onChange={onPinCodeChange}
+          onChange={(e) => onPinCodeChange(e)}
           required
         />
       </div>

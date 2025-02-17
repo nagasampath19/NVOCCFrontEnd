@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 import NameAndAddress from "./NameAndAddressDetails";
 import { useNavigate } from "react-router-dom";
 import { updateShipperDetails } from "../redux/actions/shipperActions";
@@ -12,6 +13,36 @@ const ShipperDetails = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    } else {
+      axios.post(API_URLS.VALIDATE_TOKEN, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          navigate("/");
+        }
+      })
+      .catch(error => {
+        navigate("/");
+      });
+    }
+  }, [navigate]);
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.user_id;
+    }
+    return null;
+  };
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +68,10 @@ const ShipperDetails = () => {
 
   const createShipping = () => {
     const token = localStorage.getItem("token");
-    axios.post(API_URLS.CREATE_SHIPPING, ShipperDetails, {
+    const userId = getUserIdFromToken();
+    const shippingData = { ...ShipperDetails, user_id: userId };
+
+    axios.post(API_URLS.CREATE_SHIPPING, shippingData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -81,36 +115,34 @@ const ShipperDetails = () => {
 
   return (
     <div className="step-container">
-      <div className="step">
-        <h2>Shipper Details</h2>
-        <NameAndAddress
-          prefix="shipper"
-          onNameChange={onChange}
-          onAddress1Change={onChange}
-          onAddress2Change={onChange}
-          onCityChange={onChange}
-          onStateChange={onChange}
-          onCountryChange={onChange}
-          onEmailChange={onChange}
-          onPhoneChange={onChange}
-          onPinCodeChange={onChange}
-          name={ShipperDetails.shipperName}
-          address1={ShipperDetails.shipperAddress1}
-          address2={ShipperDetails.shipperAddress2}
-          city={ShipperDetails.shipperCity}
-          state={ShipperDetails.shipperState}
-          country={ShipperDetails.shipperCountry}
-          email={ShipperDetails.shipperEmail}
-          phone={ShipperDetails.shipperPhone}
-          pinCode={ShipperDetails.shipperPinCode}
-        />
-        <label htmlFor="shipperCIN">CIN</label>
-        <input type="text" id="shipperCIN" name="shipperCIN" value={ShipperDetails.shipperCIN} onChange={onChange} required />
-        <div className="firstnavigation">
-          <button type="button" className="next" onClick={nextStep}>
-            Next
-          </button>
-        </div>
+      <h2>Shipper Details</h2>
+      <NameAndAddress
+        prefix="shipper"
+        onNameChange={onChange}
+        onAddress1Change={onChange}
+        onAddress2Change={onChange}
+        onCityChange={onChange}
+        onStateChange={onChange}
+        onCountryChange={onChange}
+        onEmailChange={onChange}
+        onPhoneChange={onChange}
+        onPinCodeChange={onChange}
+        name={ShipperDetails.shipperName}
+        address1={ShipperDetails.shipperAddress1}
+        address2={ShipperDetails.shipperAddress2}
+        city={ShipperDetails.shipperCity}
+        state={ShipperDetails.shipperState}
+        country={ShipperDetails.shipperCountry}
+        email={ShipperDetails.shipperEmail}
+        phone={ShipperDetails.shipperPhone}
+        pinCode={ShipperDetails.shipperPinCode}
+      />
+      <label htmlFor="shipperCIN">CIN</label>
+      <input type="text" id="shipperCIN" name="shipperCIN" value={ShipperDetails.shipperCIN} onChange={onChange} required />
+      <div className="firstnavigation">
+        <button type="button" className="next" onClick={nextStep}>
+          Next
+        </button>
       </div>
       {showModal && (
         <div className="modal">

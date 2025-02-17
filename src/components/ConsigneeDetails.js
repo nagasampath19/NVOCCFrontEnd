@@ -1,63 +1,171 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import jwtDecode from "jwt-decode";
 import NameAndAddress from "./NameAndAddressDetails";
 import { useNavigate } from "react-router-dom";
+import { updateConsigneeDetails } from "../redux/actions/consigneeActions";
+import { API_URLS } from "../config/urls";
 
 const ConsigneeDetails = () => {
-  const [consigneeName, setConsigneeName] = useState("");
-  const [consigneeAddress1, setConsigneeAddress1] = useState("");
-  const [consigneeAddress2, setConsigneeAddress2] = useState("");
-  const [consigneeCity, setConsigneeCity] = useState("");
-  const [consigneeState, setConsigneeState] = useState("");
-  const [consigneeCountry, setConsigneeCountry] = useState("");
-  const [consigneeEmail, setConsigneeEmail] = useState("");
-  const [consigneePhone, setConsigneePhone] = useState("");
-  const [consigneePinCode, setConsigneePinCode] = useState("");
-  const [consigneeRegNo, setConsigneeRegNo] = useState("");
-  const [consigneeTIN, setConsigneeTIN] = useState("");
+  const dispatch = useDispatch();
+  const ConsigneeDetails = useSelector((state) => state.consignee);
+  const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const onNameChange = (e) => {
-    setConsigneeName(e.target.value);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    } else {
+      axios.post(API_URLS.VALIDATE_TOKEN, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          navigate("/");
+        }
+      })
+      .catch(error => {
+        navigate("/");
+      });
+    }
+  }, [navigate]);
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.user_id;
+    }
+    return null;
+  };
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(updateConsigneeDetails({ [name]: value }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!ConsigneeDetails.consigneeName) newErrors.consigneeName = "Name is required";
+    if (!ConsigneeDetails.consigneeAddress1) newErrors.consigneeAddress1 = "Address 1 is required";
+    if (!ConsigneeDetails.consigneeCity) newErrors.consigneeCity = "City is required";
+    if (!ConsigneeDetails.consigneeState) newErrors.consigneeState = "State is required";
+    if (!ConsigneeDetails.consigneeCountry) newErrors.consigneeCountry = "Country is required";
+    if (!ConsigneeDetails.consigneeEmail) {
+      newErrors.consigneeEmail = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(ConsigneeDetails.consigneeEmail)) {
+      newErrors.consigneeEmail = "Email address is invalid";
+    }
+    if (!ConsigneeDetails.consigneePinCode) newErrors.consigneePinCode = "Pin Code is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const createConsignee = () => {
+    const token = localStorage.getItem("token");
+    const userId = getUserIdFromToken();
+    const consigneeData = { ...ConsigneeDetails, user_id: userId };
+
+    axios.post(API_URLS.CREATE_CONSIGNEE, consigneeData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      console.log('Consignee created successfully', response.data);
+      navigate("/notify-parties");
+    })
+    .catch(error => {
+      if(error.response && error.response.status === 403) {
+        navigate("/");
+      }
+      if(error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    });
   };
 
   const nextStep = () => {
-    navigate("/notify-parties");
+    if (validate()) {
+      createConsignee();
+    } else {
+      setShowModal(true);
+    }
   };
 
   const prevStep = () => {
     navigate("/shipper-details");
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+    // Add error class to the input fields and labels with errors
+    Object.keys(errors).forEach((key) => {
+      const input = document.getElementById(`consignee${key.charAt(0).toUpperCase() + key.slice(1)}`);
+      const label = document.querySelector(`label[for="consignee${key.charAt(0).toUpperCase() + key.slice(1)}"]`);
+      if (input) {
+        input.classList.add("error");
+      }
+      if (label) {
+        label.classList.add("error");
+      }
+    });
+  };
+
   return (
     <div className="step-container">
-      <div className="step">
-        <h2>Consignee Details</h2>
-        <NameAndAddress
-          prefix="consignee"
-          onNameChange={onNameChange}
-          onLNameChange={setConsigneeName}
-          onAddress1Change={setConsigneeAddress1}
-          onAddress2Change={setConsigneeAddress2}
-          onCityChange={setConsigneeCity}
-          onStateChange={setConsigneeState}
-          onCountryChange={setConsigneeCountry}
-          onEmailChange={setConsigneeEmail}
-          onPhoneChange={setConsigneePhone}
-          onPinCodeChange={setConsigneePinCode}
-        />
-        <label htmlFor="consigneeRegNo">Registration No</label>
-        <input type="text" id="consigneeRegNo" value={consigneeRegNo} onChange={(e) => setConsigneeRegNo(e.target.value)} required />
-        <label htmlFor="consigneeTIN">TIN No</label>
-        <input type="text" id="consigneeTIN" value={consigneeTIN} onChange={(e) => setConsigneeTIN(e.target.value)} required />
-        <div className="navigation">
-          <button type="button" className="previous" onClick={prevStep}>
-            Previous
-          </button>
-          <button type="button" className="next" onClick={nextStep}>
-            Next
-          </button>
-        </div>
+      <h2>Consignee Details</h2>
+      <NameAndAddress
+        prefix="consignee"
+        onNameChange={onChange}
+        onAddress1Change={onChange}
+        onAddress2Change={onChange}
+        onCityChange={onChange}
+        onStateChange={onChange}
+        onCountryChange={onChange}
+        onEmailChange={onChange}
+        onPhoneChange={onChange}
+        onPinCodeChange={onChange}
+        name={ConsigneeDetails.consigneeName}
+        address1={ConsigneeDetails.consigneeAddress1}
+        address2={ConsigneeDetails.consigneeAddress2}
+        city={ConsigneeDetails.consigneeCity}
+        state={ConsigneeDetails.consigneeState}
+        country={ConsigneeDetails.consigneeCountry}
+        email={ConsigneeDetails.consigneeEmail}
+        phone={ConsigneeDetails.consigneePhone}
+        pinCode={ConsigneeDetails.consigneePinCode}
+      />
+      <label htmlFor="consigneeRegNo">Registration No</label>
+      <input type="text" id="consigneeRegNo" value={ConsigneeDetails.consigneeRegNo} onChange={onChange} required />
+      <label htmlFor="consigneeTIN">TIN No</label>
+      <input type="text" id="consigneeTIN" value={ConsigneeDetails.consigneeTIN} onChange={onChange} required />
+      <div className="navigation">
+        <button type="button" className="previous" onClick={prevStep}>
+          Previous
+        </button>
+        <button type="button" className="next" onClick={nextStep}>
+          Next
+        </button>
       </div>
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Enter missing fields</h3>
+            <ul>
+              {Object.keys(errors).map((key) => (
+                <li key={key}>{errors[key]}</li>
+              ))}
+            </ul>
+            <button className="close-modal-button" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
