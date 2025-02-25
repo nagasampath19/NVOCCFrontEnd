@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import NameAndAddress from "./NameAndAddressDetails";
 import { useNavigate } from "react-router-dom";
-import { updateShipperDetails } from "../redux/actions/shipperActions";
-import { API_URLS } from "../config/urls";
+import { updateShipperDetails } from "../../redux/actions/shipperActions";
+import { API_URLS } from "../../config/urls";
 
 const ShipperDetails = () => {
   const dispatch = useDispatch();
@@ -13,8 +13,15 @@ const ShipperDetails = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const urls = API_URLS;
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
@@ -71,14 +78,13 @@ const ShipperDetails = () => {
     const userId = getUserIdFromToken();
     const shippingData = { ...ShipperDetails, user_id: userId };
 
-    axios.post(API_URLS.CREATE_SHIPPING, shippingData, {
+    axios.post(urls.CREATE_SHIPPER, shippingData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
     .then(response => {
-      console.log('Shipping created successfully', response.data);
-      navigate("/consignee-details");
+      navigate("/consignee-details?bl_id=" + response.data);
     })
     .catch(error => {
       if(error.response && error.response.status === 403) {

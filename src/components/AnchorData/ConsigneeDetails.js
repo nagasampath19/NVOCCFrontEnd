@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import NameAndAddress from "./NameAndAddressDetails";
-import { useNavigate } from "react-router-dom";
-import { updateConsigneeDetails } from "../redux/actions/consigneeActions";
-import { API_URLS } from "../config/urls";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { updateConsigneeDetails } from "../../redux/actions/consigneeActions";
+import { API_URLS } from "../../config/urls";
 
 const ConsigneeDetails = () => {
   const dispatch = useDispatch();
@@ -13,6 +13,8 @@ const ConsigneeDetails = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const urls = API_URLS;
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,6 +64,7 @@ const ConsigneeDetails = () => {
       newErrors.consigneeEmail = "Email address is invalid";
     }
     if (!ConsigneeDetails.consigneePinCode) newErrors.consigneePinCode = "Pin Code is required";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -69,9 +72,11 @@ const ConsigneeDetails = () => {
   const createConsignee = () => {
     const token = localStorage.getItem("token");
     const userId = getUserIdFromToken();
-    const consigneeData = { ...ConsigneeDetails, user_id: userId };
+    let bl_id = searchParams.get("bl_id");
+    const consigneeData = { ...ConsigneeDetails, user_id: userId, bl_id: bl_id };
+    
 
-    axios.post(API_URLS.CREATE_CONSIGNEE, consigneeData, {
+    axios.post(urls.CREATE_CONSIGNEE, consigneeData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -106,8 +111,8 @@ const ConsigneeDetails = () => {
     setShowModal(false);
     // Add error class to the input fields and labels with errors
     Object.keys(errors).forEach((key) => {
-      const input = document.getElementById(`consignee${key.charAt(0).toUpperCase() + key.slice(1)}`);
-      const label = document.querySelector(`label[for="consignee${key.charAt(0).toUpperCase() + key.slice(1)}"]`);
+      const input = document.getElementById(`${key.charAt(0) + key.slice(1)}`);
+      const label = document.querySelector(`label[for="${key.charAt(0) + key.slice(1)}"]`);
       if (input) {
         input.classList.add("error");
       }
@@ -141,10 +146,12 @@ const ConsigneeDetails = () => {
         phone={ConsigneeDetails.consigneePhone}
         pinCode={ConsigneeDetails.consigneePinCode}
       />
-      <label htmlFor="consigneeRegNo">Registration No</label>
-      <input type="text" id="consigneeRegNo" value={ConsigneeDetails.consigneeRegNo} onChange={onChange} required />
-      <label htmlFor="consigneeTIN">TIN No</label>
-      <input type="text" id="consigneeTIN" value={ConsigneeDetails.consigneeTIN} onChange={onChange} required />
+      <label htmlFor="consigneeRegNo">GSTIN Number</label>
+      <input type="text" id="consigneeRegNo" name="consigneeRegNo" value={ConsigneeDetails.consigneeRegNo || ''} onChange={onChange} required />
+      <label htmlFor="consigneePANNo">PAN Number</label>
+      <input type="text" id="consigneePANNo" name="consigneePANNo" value={ConsigneeDetails.consigneePANNo || ''} onChange={onChange} required />
+      <label htmlFor="consigneeIECCode">IEC Code</label>
+      <input type="text" id="consigneeIECCode" name="consigneeIECCode" value={ConsigneeDetails.consigneeIECCode || ''} onChange={onChange} required />
       <div className="navigation">
         <button type="button" className="previous" onClick={prevStep}>
           Previous

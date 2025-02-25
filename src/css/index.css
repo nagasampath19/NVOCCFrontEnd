@@ -88,7 +88,6 @@ code {
     color: white;
     text-decoration: none;
     display: block;
-    padding: 5px;
     border-radius: 4px;
     text-align: left; /* Ensure submenu text is left-aligned */
     padding-left: 20px; /* Add padding to move text two spaces to the right */
@@ -108,7 +107,6 @@ code {
     color: white;
     text-decoration: none;
     display: block;
-    padding: 5px;
     border-radius: 4px;
   }
   
