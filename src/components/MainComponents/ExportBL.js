@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../../css/common.css"; // Assuming common.css contains the desired styles
-import "./ExportBL.css"; // Import the new CSS file for styling
 
 const ExportBL = () => {
   const [jobNumber, setJobNumber] = useState("");

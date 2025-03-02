@@ -1,0 +1,40 @@
+table tbody tr:hover .actions {
+  display: block;
+}
+
+.custom-grid {
+  border: 1px solid grey;
+  width: 100%;
+  border-collapse: collapse;
+  color: black;
+  font-weight: normal;
+}
+
+.custom-grid thead {
+  background-color: #708090;
+  font-weight: normal;
+}
+
+.custom-grid th,
+.custom-grid td {
+  border: 1px solid grey;
+  padding: 8px;
+  font-weight: normal;
+}
+
+.grid-row {
+  position: relative;
+}
+
+.grid-row:hover {
+  background-color: #f0f0f0;
+}
+
+.actions {
+  text-align: center;
+}
+
+.action-icon {
+  cursor: pointer;
+  margin-right: 10px;
+}

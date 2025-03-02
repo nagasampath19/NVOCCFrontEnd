@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../../css/common.css"; // Assuming common.css contains the desired styles
-import "./BuyingRate.css"; // Import the new CSS file for styling
 
 const BuyingRate = () => {
   const [enquiryID, setEnquiryID] = useState("");
@@ -93,6 +92,7 @@ const BuyingRate = () => {
                 <option value="Transportation">Transportation</option>
               </select>
             </div>
+            <h3>Container Details</h3>
             <div className="form-group">
               <label htmlFor="containerSize">Container Size</label>
               <select
@@ -153,6 +153,7 @@ const BuyingRate = () => {
                 onChange={(e) => setYear(e.target.value)}
               />
             </div>
+            <h3>Charges</h3>
             <div className="form-group">
               <label htmlFor="chargeName">Charge Name</label>
               <select

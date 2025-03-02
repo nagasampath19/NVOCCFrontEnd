@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Detention.css";
+
 
 const Detention = () => {
   const [hblNumber, setHblNumber] = useState("Select");
@@ -396,7 +396,7 @@ const Detention = () => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

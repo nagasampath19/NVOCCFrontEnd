@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./SalesInvoice.css";
 
 const SalesInvoice = () => {
   const [activityType, setActivityType] = useState("Select");
@@ -658,7 +657,7 @@ const SalesInvoice = () => {
             />
           </div>
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

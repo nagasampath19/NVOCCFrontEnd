@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import "./PurchaseInvoice.css";
 
-const PurchaseInvoice = () => {
+const ProformaInvoice = () => {
   const [activityType, setActivityType] = useState("Select");
   const [hblNumber, setHblNumber] = useState("");
   const [jobNumber, setJobNumber] = useState("");
@@ -62,7 +61,7 @@ const PurchaseInvoice = () => {
 
   return (
     <div className="step-container">
-      <h2>Purchase Invoice</h2>
+      <h2>Proforma Invoice</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-section">
           <div className="form-group">
@@ -269,6 +268,84 @@ const PurchaseInvoice = () => {
               id="fullInvoiceNumber"
               value={fullInvoiceNumber}
               onChange={(e) => setFullInvoiceNumber(e.target.value)}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="terminalPort">Terminal Port</label>
+            <select
+              id="terminalPort"
+              value={terminalPort}
+              onChange={(e) => setTerminalPort(e.target.value)}
+              className="form-control"
+            >
+              <option value="Select">Select</option>
+              {/* Add other options here */}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="thcEndorsement">THC/ENDORSEMENT</label>
+            <select
+              id="thcEndorsement"
+              value={thcEndorsement}
+              onChange={(e) => setThcEndorsement(e.target.value)}
+              className="form-control"
+            >
+              <option value="Select">Select</option>
+              <option value="THC">THC</option>
+              <option value="Endorsement">Endorsement</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="genHaz">GEN/HAZ</label>
+            <select
+              id="genHaz"
+              value={genHaz}
+              onChange={(e) => setGenHaz(e.target.value)}
+              className="form-control"
+            >
+              <option value="Select">Select</option>
+              <option value="Gen">Gen</option>
+              <option value="HAZ">HAZ</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="gstin">GSTIN</label>
+            <input
+              type="text"
+              id="gstin"
+              value={gstin}
+              onChange={(e) => setGstin(e.target.value)}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="accountNo">Account No</label>
+            <input
+              type="text"
+              id="accountNo"
+              value={accountNo}
+              onChange={(e) => setAccountNo(e.target.value)}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="roundOff">Round Off</label>
+            <input
+              type="text"
+              id="roundOff"
+              value={roundOff}
+              onChange={(e) => setRoundOff(e.target.value)}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="narration">Narration</label>
+            <input
+              type="text"
+              id="narration"
+              value={narration}
+              onChange={(e) => setNarration(e.target.value)}
               className="form-control"
             />
           </div>
@@ -586,4 +663,5 @@ const PurchaseInvoice = () => {
   );
 };
 
-export default PurchaseInvoice;
+export default ProformaInvoice;
+

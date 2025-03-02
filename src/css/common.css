@@ -6,7 +6,7 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: normal;
   color: #555;
 }
 
@@ -79,6 +79,18 @@
 
 .popup-content button {
   margin-right: 10px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+.form-column {
+  flex: 1;
+  padding: 0 15px;
+  min-width: 300px; /* Adjust as needed */
 }
 
 

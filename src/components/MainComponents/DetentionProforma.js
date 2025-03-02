@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./DetentionProforma.css";
 
 const DetentionProforma = () => {
   const [hblNumber, setHblNumber] = useState("Select");
@@ -240,7 +239,7 @@ const DetentionProforma = () => {
             />
           </div>
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

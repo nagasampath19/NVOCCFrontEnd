@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./IGMUpdate.css";
+
 
 const IGMUpdate = () => {
   const [vessel, setVessel] = useState("Select");
@@ -82,7 +82,7 @@ const IGMUpdate = () => {
             className="form-control"
           />
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

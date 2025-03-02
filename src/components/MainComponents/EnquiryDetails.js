@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../../css/common.css"; // Assuming common.css contains the desired styles
-import "./EnquiryDetails.css"; // Import the new CSS file for styling
+
 
 const EnquiryDetails = () => {
   const [enquiryReferenceID, setenquiryReferenceID] = useState("");

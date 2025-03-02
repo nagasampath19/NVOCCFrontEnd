@@ -26,7 +26,7 @@ const Login = () => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        navigate("/shipper-details"); // Navigate directly to Shipper Details
+        navigate("/dashboard"); // Redirect to Dashboard after login
       } else {
         setError("Invalid username or password.");
       }

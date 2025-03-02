@@ -67,8 +67,6 @@ code {
   
   .side-menu .tree li span {
     cursor: pointer;
-    font-weight: bold;
-    font-size: 18px; /* Make the font bigger */
     text-align: left; /* Align text to the left */
     display: block; /* Ensure the span takes the full width */
   }
@@ -90,7 +88,6 @@ code {
     display: block;
     border-radius: 4px;
     text-align: left; /* Ensure submenu text is left-aligned */
-    padding-left: 20px; /* Add padding to move text two spaces to the right */
   }
   
   .side-menu .tree li ul li a.disabled {

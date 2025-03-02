@@ -1,0 +1,28 @@
+.delete-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure the popup is above other elements */
+}
+
+.delete-popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  width: 600px; /* Set a wider fixed width for the popup */
+}
+
+.delete-popup-content h3 {
+  margin-top: 0;
+}
+
+.delete-popup-content button {
+  margin: 10px;
+}
