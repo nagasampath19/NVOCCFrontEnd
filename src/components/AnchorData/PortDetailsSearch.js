@@ -5,8 +5,7 @@ import { API_URLS } from "../../config/urls";
 import Grid from "../Common/Grid";
 import DeleteConfirmationPopup from "../Common/DeleteConfirmationPopup";
 import "../../css/PortDetailsSearch.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+
 
 const PortDetailsSearch = () => {
   const [porttype, setPortType] = useState("0");

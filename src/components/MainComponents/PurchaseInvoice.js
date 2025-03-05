@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./PurchaseInvoice.css";
 
 const PurchaseInvoice = () => {
   const [activityType, setActivityType] = useState("Select");

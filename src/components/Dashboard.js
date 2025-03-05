@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isTokenValid } from "../utils/jwt";
-import "../css/App.css";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();

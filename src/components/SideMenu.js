@@ -42,7 +42,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
       setIsAccountsCollapsed(false);
     } else if (currentPath.startsWith("/import-accounts") || currentPath.startsWith("/sales-fixed-charges") || currentPath.startsWith("/purchase-fixed-charges")) {
       setIsImportAccountsCollapsed(false);
-    } else if (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/port-details") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details")) {
+    } else if (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/vessel-details-search") || currentPath.startsWith("/port-details") || currentPath.startsWith("/port-details-search") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details")) {
       setIsAnchorDataCollapsed(false);
     }
   }, [currentPath]);
@@ -101,17 +101,35 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
       navigate("/port-details");
     }
   };
+  const handleVesselDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/vessledetailscount`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/vessel-details-search");
+      } else {
+        navigate("/vessel-details");
+      }
+    } catch (error) {
+      console.error("Error checking port details: ", error);
+      navigate("/vessel-details");
+    }
+  };
 
   return (
     <nav className={`side-menu ${isMenuOpen ? "open" : ""}`}>
       <ul className="tree">
         <li>
-          <span onClick={toggleBLManagementCollapse} className="collapsible">
+          <span onClick={toggleBLManagementCollapse} className="collapsible" style={{ cursor: "pointer" }}>
             {isBLManagementCollapsed ? "▶" : "▼"} BL Management
           </span>
           <ul className={`nested ${isBLManagementCollapsed ? "collapsed" : ""}`}>
             <li>
-              <span onClick={toggleEnquiryCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleEnquiryCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isEnquiryCollapsed ? "▶" : "▼"} Enquiry
               </span>
               <ul className={`nested ${isEnquiryCollapsed ? "collapsed" : ""}`}>
@@ -138,7 +156,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </ul>
             </li>
             <li>
-              <span onClick={toggleContainerReleaseOrderCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleContainerReleaseOrderCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isContainerReleaseOrderCollapsed ? "▶" : "▼"} CRO
               </span>
               <ul className={`nested ${isContainerReleaseOrderCollapsed ? "collapsed" : ""}`}>
@@ -175,7 +193,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </ul>
             </li>
             <li>
-              <span onClick={toggleImportBLCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleImportBLCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isImportBLCollapsed ? "▶" : "▼"} Import BL
               </span>
               <ul className={`nested ${isImportBLCollapsed ? "collapsed" : ""}`}>
@@ -217,7 +235,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </ul>
             </li>
             <li>
-              <span onClick={toggleExportBLCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleExportBLCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isExportBLCollapsed ? "▶" : "▼"} Export BL
               </span>
               <ul className={`nested ${isExportBLCollapsed ? "collapsed" : ""}`}>
@@ -263,7 +281,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
             <li className={getActiveClass("/detention")} onClick={() => showStep(17)}>Detention</li>
             <li className={getActiveClass("/detention-proforma")} onClick={() => showStep(18)}>Detention Proforma</li>
             <li>
-              <span onClick={toggleAccountsCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleAccountsCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isAccountsCollapsed ? "▶" : "▼"} Accounts
               </span>
               <ul className={`nested ${isAccountsCollapsed ? "collapsed" : ""}`}>
@@ -290,7 +308,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </ul>
             </li>
             <li>
-              <span onClick={toggleImportAccountsCollapse} className="collapsible" style={{ fontWeight: "normal" }}>
+              <span onClick={toggleImportAccountsCollapse} className="collapsible" style={{ fontWeight: "normal", cursor: "pointer" }}>
                 {isImportAccountsCollapsed ? "▶" : "▼"} Import Fixed Charges
               </span>
               <ul className={`nested ${isImportAccountsCollapsed ? "collapsed" : ""}`}>
@@ -309,7 +327,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
           </ul>
         </li>
         <li>
-          <span onClick={toggleAnchorDataCollapse} className="collapsible">
+          <span onClick={toggleAnchorDataCollapse} className="collapsible" style={{ cursor: "pointer" }}>
             {isAnchorDataCollapsed ? "▶" : "▼"} Anchor Data
           </span>
           <ul className={`nested ${isAnchorDataCollapsed ? "collapsed" : ""}`}>
@@ -329,14 +347,14 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/vessel-details" className={`submenu-item ${getActiveClass("/vessel-details")}`}>
+              <NavLink to="/vessel-details" onClick={handleVesselDetailsClick} className={`submenu-item ${getActiveClass("/vessel-details") || getActiveClass("/vessel-details-search")}`}>
                 Vessel Details
               </NavLink>
             </li>
             <li>
-              <span onClick={handlePortDetailsClick} className={`submenu-item ${getActiveClass("/port-details")}`}>
+              <NavLink to="/port-details" onClick={handlePortDetailsClick} className={`submenu-item ${getActiveClass("/port-details") || getActiveClass("/port-details-search")}`}>
                 Port Details
-              </span>
+              </NavLink>
             </li>
             <li>
               <NavLink to="/package-details" className={`submenu-item ${getActiveClass("/package-details")}`}>

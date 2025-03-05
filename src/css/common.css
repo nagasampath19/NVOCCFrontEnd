@@ -20,7 +20,9 @@
 }
 
 .form-group input.error {
-  text-align: left;
+  display: block !important;
+  color: red !important;
+  text-align: left !important; 
 }
 
 .radio-group {

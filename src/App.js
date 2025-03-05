@@ -56,6 +56,7 @@ import ExportBLVesselDetails from "./components/MainComponents/ExportBLVesselDet
 import ExportBLOtherDetails from "./components/MainComponents/ExportBLOtherDetails";
 import ExportBLContainerDetails from "./components/MainComponents/ExportBLContainerDetails";
 import Dashboard from "./components/Dashboard";
+import VesselDetailsSearch from "./components/AnchorData/VesselDetailsSearch";
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -222,6 +223,7 @@ const App = () => {
             <Route path="/consignee-details" element={<ConsigneeDetails />} />
             <Route path="/notify-parties" element={<NotifyParties />} />
             <Route path="/vessel-details" element={<VesselDetails />} />
+            <Route path="/vessel-details-search" element={<VesselDetailsSearch />} />
             <Route path="/port-details" element={<PortDetails />} />
             <Route path="/port-details-search" element={<PortDetailsSearch />} />
             <Route path="/package-details" element={<PackageDetails />} />

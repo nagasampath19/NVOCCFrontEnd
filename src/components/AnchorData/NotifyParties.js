@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import "../../css/NotifyParties.css";
+
 import "../../css/common.css";
 import { API_URLS } from "../../config/urls";
 import { FaPen, FaTrash } from "react-icons/fa";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../css/ShipperDetails.css"; // Assuming ShipperDetails.css contains the desired styles
+
 
 const ShippingLineDetails = () => {
   const [shippingLineCode, setShippingLineCode] = useState("");
