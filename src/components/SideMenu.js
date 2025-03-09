@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 import { API_URLS } from "../config/urls";
 
 const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
@@ -15,6 +16,10 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const urls = API_URLS;
+
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.user_id;
 
   useEffect(() => {
     // Collapse all menus except BL Management on login
@@ -42,7 +47,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
       setIsAccountsCollapsed(false);
     } else if (currentPath.startsWith("/import-accounts") || currentPath.startsWith("/sales-fixed-charges") || currentPath.startsWith("/purchase-fixed-charges")) {
       setIsImportAccountsCollapsed(false);
-    } else if (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/vessel-details-search") || currentPath.startsWith("/port-details") || currentPath.startsWith("/port-details-search") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details")) {
+    } else if (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/vessel-details-search") || currentPath.startsWith("/port-details") || currentPath.startsWith("/port-details-search") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details") || currentPath.startsWith("/notify-details-search")) {
       setIsAnchorDataCollapsed(false);
     }
   }, [currentPath]);
@@ -117,6 +122,62 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
     } catch (error) {
       console.error("Error checking port details: ", error);
       navigate("/vessel-details");
+    }
+  };
+
+  const handleShipperDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Shipper/shipperdetailscount`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/shipper-details-search");
+      } else {
+        navigate("/shipper-details");
+      }
+    } catch (error) {
+      console.error("Error checking shipper details: ", error);
+      navigate("/shipper-details");
+    }
+  };
+
+  const handleConsigneeDetailsClick = async () => {
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Consignee/consigneedetailscount`, { user_id: userId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/consignee-details-search");
+      } else {
+        navigate("/consignee-details");
+      }
+    } catch (error) {
+      console.error("Error checking consignee details: ", error);
+      navigate("/consignee-details");
+    }
+  };
+
+  const handleNotifyDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Notify/notifydetailscount`, { user_id: userId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/notify-details-search");
+      } else {
+        navigate("/notify-details");
+      }
+    } catch (error) {
+      console.error("Error checking notify details: ", error);
+      navigate("/notify-details");
     }
   };
 
@@ -332,17 +393,17 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
           </span>
           <ul className={`nested ${isAnchorDataCollapsed ? "collapsed" : ""}`}>
             <li>
-              <NavLink to="/shipper-details" className={`submenu-item ${getActiveClass("/shipper-details")}`}>
+              <NavLink to="/shipper-details" onClick={handleShipperDetailsClick} className={`submenu-item ${getActiveClass("/shipper-details") || getActiveClass("/shipper-details-search")}`}>
                 Shipper Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/consignee-details" className={`submenu-item ${getActiveClass("/consignee-details")}`}>
+              <NavLink to="/consignee-details" onClick={handleConsigneeDetailsClick} className={`submenu-item ${getActiveClass("/consignee-details") || getActiveClass("/consignee-details-search")}`}>
                 Consignee Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/notify-parties" className={`submenu-item ${getActiveClass("/notify-parties")}`}>
+              <NavLink to="/notify-parties" onClick={handleNotifyDetailsClick} className={`submenu-item ${getActiveClass("/notify-details") || getActiveClass("/notify-details-search")}`}>
                 Notify Parties
               </NavLink>
             </li>

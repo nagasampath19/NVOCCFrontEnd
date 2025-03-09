@@ -32,7 +32,6 @@ const NameAndAddress = ({
           name={`${prefix}Name`}
           value={name}
           onChange={(e) => onNameChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -43,7 +42,6 @@ const NameAndAddress = ({
           name={`${prefix}Address1`}
           value={address1}
           onChange={(e) => onAddress1Change(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -64,7 +62,6 @@ const NameAndAddress = ({
           name={`${prefix}City`}
           value={city}
           onChange={(e) => onCityChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -75,7 +72,6 @@ const NameAndAddress = ({
           name={`${prefix}State`}
           value={state}
           onChange={(e) => onStateChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -86,7 +82,6 @@ const NameAndAddress = ({
           name={`${prefix}Country`}
           value={country}
           onChange={(e) => onCountryChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -97,7 +92,6 @@ const NameAndAddress = ({
           name={`${prefix}Email`}
           value={email}
           onChange={(e) => onEmailChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -108,7 +102,6 @@ const NameAndAddress = ({
           name={`${prefix}Phone`}
           value={phone}
           onChange={(e) => onPhoneChange(e)}
-          required
         />
       </div>
       <div className="form-group">
@@ -119,7 +112,6 @@ const NameAndAddress = ({
           name={`${prefix}PinCode`}
           value={pinCode}
           onChange={(e) => onPinCodeChange(e)}
-          required
         />
       </div>
     </div>

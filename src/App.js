@@ -57,6 +57,9 @@ import ExportBLOtherDetails from "./components/MainComponents/ExportBLOtherDetai
 import ExportBLContainerDetails from "./components/MainComponents/ExportBLContainerDetails";
 import Dashboard from "./components/Dashboard";
 import VesselDetailsSearch from "./components/AnchorData/VesselDetailsSearch";
+import ShipperDetailsSearch from "./components/AnchorData/ShipperDetailsSearch";
+import ConsigneeDetailsSearch from "./components/AnchorData/ConsigneeDetailsSearch";
+import NotifySearchDetails from "./components/AnchorData/NotifySearchDetails"; // Import NotifySearchDetails
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -220,8 +223,12 @@ const App = () => {
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/shipper-details" element={<ShipperDetails />} />
+            <Route path="/shipper-details-search" element={<ShipperDetailsSearch />} />
             <Route path="/consignee-details" element={<ConsigneeDetails />} />
+            <Route path="/consignee-details-search" element={<ConsigneeDetailsSearch />} />
             <Route path="/notify-parties" element={<NotifyParties />} />
+            <Route path="/notify-details-search" element={<NotifySearchDetails />} />
+            <Route path="/notify-details" element={<NotifyParties />} /> {/* Add this route */}
             <Route path="/vessel-details" element={<VesselDetails />} />
             <Route path="/vessel-details-search" element={<VesselDetailsSearch />} />
             <Route path="/port-details" element={<PortDetails />} />

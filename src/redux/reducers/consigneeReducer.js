@@ -10,8 +10,9 @@ const initialState = {
   consigneeEmail: '',
   consigneePhone: '',
   consigneePinCode: '',
-  consigneeRegNo: '',
-  ConsigneeTinNo: ''
+  consigneeGSTIN: '',
+  consigneePAN: '',
+  consigneeIEC: '',
 };
 
 const consigneeReducer = (state = initialState, action) => {

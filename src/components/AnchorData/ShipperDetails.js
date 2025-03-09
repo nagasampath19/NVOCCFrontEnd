@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import NameAndAddress from "./NameAndAddressDetails";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { updateShipperDetails } from "../../redux/actions/shipperActions";
 import { API_URLS } from "../../config/urls";
+import ValidationPopup from "../Common/ValidationPopup";
+import NameAndAddress from "./NameAndAddressDetails";
 
 const ShipperDetails = () => {
   const dispatch = useDispatch();
   const ShipperDetails = useSelector((state) => state.shipping);
   const [errors, setErrors] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const urls = API_URLS;
   const isInitialRender = useRef(true);
 
@@ -42,6 +44,13 @@ const ShipperDetails = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (location.state && location.state.shipperDetails) {
+      const shipperDetails = location.state.shipperDetails;
+      dispatch(updateShipperDetails(shipperDetails));
+    }
+  }, [location.state, dispatch]);
+
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -54,6 +63,7 @@ const ShipperDetails = () => {
   const onChange = (e) => {
     const { name, value } = e.target;
     dispatch(updateShipperDetails({ [name]: value }));
+    handleChange(e);
   };
 
   const validate = () => {
@@ -84,7 +94,8 @@ const ShipperDetails = () => {
       }
     })
     .then(response => {
-      navigate("/consignee-details?bl_id=" + response.data);
+      const searchParams = location.state?.searchParams || {};
+      navigate("/shipper-details-search", { state: { updatedShipperDetails: response.data, searchParams } });
     })
     .catch(error => {
       if(error.response && error.response.status === 403) {
@@ -96,16 +107,28 @@ const ShipperDetails = () => {
     });
   };
 
-  const nextStep = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (validate()) {
       createShipping();
     } else {
-      setShowModal(true);
+      setShowPopup(true);
+    }
+  };
+
+  const handleChange = (e) => {
+    const input = document.getElementById(e.target.id);
+    const label = document.querySelector(`label[for="${e.target.id}"]`);
+    if (input) {
+      input.classList.remove("error");
+    }
+    if (label) {
+      label.classList.remove("error");
     }
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setShowPopup(false);
     // Add error class to the input fields and labels with errors
     Object.keys(errors).forEach((key) => {
       const input = document.getElementById(`shipper${key.charAt(0).toUpperCase() + key.slice(1)}`);
@@ -122,47 +145,41 @@ const ShipperDetails = () => {
   return (
     <div className="step-container">
       <h2>Shipper Details</h2>
-      <NameAndAddress
-        prefix="shipper"
-        onNameChange={onChange}
-        onAddress1Change={onChange}
-        onAddress2Change={onChange}
-        onCityChange={onChange}
-        onStateChange={onChange}
-        onCountryChange={onChange}
-        onEmailChange={onChange}
-        onPhoneChange={onChange}
-        onPinCodeChange={onChange}
-        name={ShipperDetails.shipperName}
-        address1={ShipperDetails.shipperAddress1}
-        address2={ShipperDetails.shipperAddress2}
-        city={ShipperDetails.shipperCity}
-        state={ShipperDetails.shipperState}
-        country={ShipperDetails.shipperCountry}
-        email={ShipperDetails.shipperEmail}
-        phone={ShipperDetails.shipperPhone}
-        pinCode={ShipperDetails.shipperPinCode}
-      />
-      <label htmlFor="shipperCIN">CIN</label>
-      <input type="text" id="shipperCIN" name="shipperCIN" value={ShipperDetails.shipperCIN} onChange={onChange} required />
-      <div className="firstnavigation">
-        <button type="button" className="next" onClick={nextStep}>
-          Next
-        </button>
-      </div>
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Enter missing fields</h3>
-            <ul>
-              {Object.keys(errors).map((key) => (
-                <li key={key}>{errors[key]}</li>
-              ))}
-            </ul>
-            <button className="close-modal-button" onClick={closeModal}>Close</button>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <NameAndAddress
+          prefix="shipper"
+          onNameChange={onChange}
+          onAddress1Change={onChange}
+          onAddress2Change={onChange}
+          onCityChange={onChange}
+          onStateChange={onChange}
+          onCountryChange={onChange}
+          onEmailChange={onChange}
+          onPhoneChange={onChange}
+          onPinCodeChange={onChange}
+          name={ShipperDetails.shipperName}
+          address1={ShipperDetails.shipperAddress1}
+          address2={ShipperDetails.shipperAddress2}
+          city={ShipperDetails.shipperCity}
+          state={ShipperDetails.shipperState}
+          country={ShipperDetails.shipperCountry}
+          email={ShipperDetails.shipperEmail}
+          phone={ShipperDetails.shipperPhone}
+          pinCode={ShipperDetails.shipperPinCode}
+        />
+        <div className="form-group">
+          <label htmlFor="shipperCIN">CIN</label>
+          <input
+            type="text"
+            id="shipperCIN"
+            name="shipperCIN"
+            value={ShipperDetails.shipperCIN || ""}
+            onChange={onChange}
+          />
         </div>
-      )}
+        <button type="submit">Save</button>
+      </form>
+      {showPopup && <ValidationPopup errors={errors} onClose={closeModal} />}
     </div>
   );
 };

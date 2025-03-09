@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import NameAndAddress from "./NameAndAddressDetails";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { updateConsigneeDetails } from "../../redux/actions/consigneeActions";
 import { API_URLS } from "../../config/urls";
+import ValidationPopup from "../Common/ValidationPopup";
+import NameAndAddress from "./NameAndAddressDetails";
 
 const ConsigneeDetails = () => {
   const dispatch = useDispatch();
   const ConsigneeDetails = useSelector((state) => state.consignee);
   const [errors, setErrors] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const urls = API_URLS;
-  const [searchParams] = useSearchParams();
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
@@ -37,6 +44,13 @@ const ConsigneeDetails = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (location.state && location.state.consigneeDetails) {
+      const consigneeDetails = location.state.consigneeDetails;
+      dispatch(updateConsigneeDetails(consigneeDetails));
+    }
+  }, [location.state, dispatch]);
+
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -49,6 +63,7 @@ const ConsigneeDetails = () => {
   const onChange = (e) => {
     const { name, value } = e.target;
     dispatch(updateConsigneeDetails({ [name]: value }));
+    handleChange(e);
   };
 
   const validate = () => {
@@ -64,7 +79,6 @@ const ConsigneeDetails = () => {
       newErrors.consigneeEmail = "Email address is invalid";
     }
     if (!ConsigneeDetails.consigneePinCode) newErrors.consigneePinCode = "Pin Code is required";
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -72,18 +86,16 @@ const ConsigneeDetails = () => {
   const createConsignee = () => {
     const token = localStorage.getItem("token");
     const userId = getUserIdFromToken();
-    let bl_id = searchParams.get("bl_id");
-    const consigneeData = { ...ConsigneeDetails, user_id: userId, bl_id: bl_id };
-    
+    const consigneeData = { ...ConsigneeDetails, user_id: userId };
 
-    axios.post(urls.CREATE_CONSIGNEE, consigneeData, {
+    axios.post(`${urls.BASE_URL}/blapi/Consignee/create`, consigneeData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
     .then(response => {
-      console.log('Consignee created successfully', response.data);
-      navigate("/notify-parties");
+      const searchParams = location.state?.searchParams || {};
+      navigate("/consignee-details-search", { state: { updatedConsigneeDetails: response.data, searchParams } });
     })
     .catch(error => {
       if(error.response && error.response.status === 403) {
@@ -95,24 +107,32 @@ const ConsigneeDetails = () => {
     });
   };
 
-  const nextStep = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (validate()) {
       createConsignee();
     } else {
-      setShowModal(true);
+      setShowPopup(true);
     }
   };
 
-  const prevStep = () => {
-    navigate("/shipper-details");
+  const handleChange = (e) => {
+    const input = document.getElementById(e.target.id);
+    const label = document.querySelector(`label[for="${e.target.id}"]`);
+    if (input) {
+      input.classList.remove("error");
+    }
+    if (label) {
+      label.classList.remove("error");
+    }
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setShowPopup(false);
     // Add error class to the input fields and labels with errors
     Object.keys(errors).forEach((key) => {
-      const input = document.getElementById(`${key.charAt(0) + key.slice(1)}`);
-      const label = document.querySelector(`label[for="${key.charAt(0) + key.slice(1)}"]`);
+      const input = document.getElementById(`consignee${key.charAt(0).toUpperCase() + key.slice(1)}`);
+      const label = document.querySelector(`label[for="consignee${key.charAt(0).toUpperCase() + key.slice(1)}"]`);
       if (input) {
         input.classList.add("error");
       }
@@ -125,54 +145,61 @@ const ConsigneeDetails = () => {
   return (
     <div className="step-container">
       <h2>Consignee Details</h2>
-      <NameAndAddress
-        prefix="consignee"
-        onNameChange={onChange}
-        onAddress1Change={onChange}
-        onAddress2Change={onChange}
-        onCityChange={onChange}
-        onStateChange={onChange}
-        onCountryChange={onChange}
-        onEmailChange={onChange}
-        onPhoneChange={onChange}
-        onPinCodeChange={onChange}
-        name={ConsigneeDetails.consigneeName}
-        address1={ConsigneeDetails.consigneeAddress1}
-        address2={ConsigneeDetails.consigneeAddress2}
-        city={ConsigneeDetails.consigneeCity}
-        state={ConsigneeDetails.consigneeState}
-        country={ConsigneeDetails.consigneeCountry}
-        email={ConsigneeDetails.consigneeEmail}
-        phone={ConsigneeDetails.consigneePhone}
-        pinCode={ConsigneeDetails.consigneePinCode}
-      />
-      <label htmlFor="consigneeRegNo">GSTIN Number</label>
-      <input type="text" id="consigneeRegNo" name="consigneeRegNo" value={ConsigneeDetails.consigneeRegNo || ''} onChange={onChange} required />
-      <label htmlFor="consigneePANNo">PAN Number</label>
-      <input type="text" id="consigneePANNo" name="consigneePANNo" value={ConsigneeDetails.consigneePANNo || ''} onChange={onChange} required />
-      <label htmlFor="consigneeIECCode">IEC Code</label>
-      <input type="text" id="consigneeIECCode" name="consigneeIECCode" value={ConsigneeDetails.consigneeIECCode || ''} onChange={onChange} required />
-      <div className="navigation">
-        <button type="button" className="previous" onClick={prevStep}>
-          Previous
-        </button>
-        <button type="button" className="next" onClick={nextStep}>
-          Next
-        </button>
-      </div>
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Enter missing fields</h3>
-            <ul>
-              {Object.keys(errors).map((key) => (
-                <li key={key}>{errors[key]}</li>
-              ))}
-            </ul>
-            <button className="close-modal-button" onClick={closeModal}>Close</button>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <NameAndAddress
+          prefix="consignee"
+          onNameChange={onChange}
+          onAddress1Change={onChange}
+          onAddress2Change={onChange}
+          onCityChange={onChange}
+          onStateChange={onChange}
+          onCountryChange={onChange}
+          onEmailChange={onChange}
+          onPhoneChange={onChange}
+          onPinCodeChange={onChange}
+          name={ConsigneeDetails.consigneeName || ""}
+          address1={ConsigneeDetails.consigneeAddress1 || ""}
+          address2={ConsigneeDetails.consigneeAddress2 || ""}
+          city={ConsigneeDetails.consigneeCity || ""}
+          state={ConsigneeDetails.consigneeState || ""}
+          country={ConsigneeDetails.consigneeCountry || ""}
+          email={ConsigneeDetails.consigneeEmail || ""}
+          phone={ConsigneeDetails.consigneePhone || ""}
+          pinCode={ConsigneeDetails.consigneePinCode || ""}
+        />
+        <div className="form-group">
+          <label htmlFor="consigneeGSTIN">GSTIN Number</label>
+          <input
+            type="text"
+            id="consigneeGSTIN"
+            name="consigneeGSTIN"
+            value={ConsigneeDetails.consigneeGSTIN || ""}
+            onChange={onChange}
+          />
         </div>
-      )}
+        <div className="form-group">
+          <label htmlFor="ConsigneePAN">PAN Number</label>
+          <input
+            type="text"
+            id="consigneePAN"
+            name="consigneePAN"
+            value={ConsigneeDetails.consigneePAN || ""}
+            onChange={onChange}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="consigneeIEC">IEC Code</label>
+          <input
+            type="text"
+            id="consigneeIEC"
+            name="consigneeIEC"
+            value={ConsigneeDetails.consigneeIEC || ""}
+            onChange={onChange}
+          />
+        </div>
+        <button type="submit">Save</button>
+      </form>
+      {showPopup && <ValidationPopup errors={errors} onClose={closeModal} />}
     </div>
   );
 };
