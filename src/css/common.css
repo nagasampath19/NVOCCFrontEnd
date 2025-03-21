@@ -25,7 +25,7 @@
   text-align: left !important; 
 }
 
-.radio-group {
+.form-group radio-group {
   display: flex;
   align-items: center;
 }
@@ -95,4 +95,49 @@
   min-width: 300px; /* Adjust as needed */
 }
 
+.input-with-icon {
+  position: relative;
+}
 
+.input-with-icon input {
+  padding-right: 30px; /* Adjust as needed */
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+}
+
+.country-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+}
+
+.country-list li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.country-list li:hover {
+  background-color: #e9ecef;
+}
+
+.country-flag {
+  width: 20px;
+  height: 15px;
+  margin-right: 10px;
+}

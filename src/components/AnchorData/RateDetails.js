@@ -1,36 +1,109 @@
-import React, { useState } from "react";
-import "../../css/common.css"; // Import common styles
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import jwtDecode from "jwt-decode";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import ValidationPopup from "../Common/ValidationPopup"; // Assuming ValidationPopup is a component for displaying validation messages
+import { API_URLS } from "../../config/urls"; // Assuming API_URLS contains the base URL
 
 const RateDetails = () => {
-  const [chargeCode, setChargeCode] = useState("");
-  const [chargeName, setChargeName] = useState("");
-  const [ledgerName, setLedgerName] = useState("");
-  const [currency, setCurrency] = useState("INR");
-  const [typeChg, setTypeChg] = useState("Freight");
-  const [gst, setGst] = useState("yes");
-  const [gstPercentage, setGstPercentage] = useState("0");
-  const [vatPercentage, setVatPercentage] = useState("0");
-  const [formula, setFormula] = useState("yes");
-  const [limit, setLimit] = useState("");
-  const [percentage, setPercentage] = useState("");
-  const [sacCode, setSacCode] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [rateDetails, setRateDetails] = useState({
+    chargeId: 0,
+    chargeCode: "",
+    chargeName: "",
+    chargeledger: "",
+    chargecurrency: "INR",
+    chargetype: "Freight",
+    chargevat: "yes",
+    chargegst: "yes",
+    chargegstpercentage: "0",
+    chargevat: "0",
+    chargeformula: "no",
+    chargelimit: "",
+    chargepercentage: "",
+    chargesaccode: ""
+  });
+  const [errors, setErrors] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
 
-  const handleSubmit = (e) => {
+   useEffect(() => {
+      if (location.state && location.state.chargeDetails) {
+        setRateDetails(location.state.chargeDetails);
+      }
+    }, [location.state]);
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      setShowPopup(false);
+      try {
+        const token = localStorage.getItem("token");
+        const userId = getUserIdFromToken();
+        const chargeDetails = { ...rateDetails, user_id: userId };
+        await axios.post(`${API_URLS.BASE_URL}/blapi/Anchordata/Charges/savechargesdetails`, chargeDetails, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const searchParams = location.state?.searchParams || {};
+        navigate("/rate-details-search", { state: { updatedChargeDetails: chargeDetails,searchParams } });
+      } catch (error) {
+        console.error("Error saving charge details: ", error);
+        // Handle error (e.g., show an error message)
+      }
+    } else {
+      setShowPopup(true);
+    }
+  };
+
+  const getUserIdFromToken = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        return decodedToken.user_id;
+      }
+      return null;
+    };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setRateDetails((prevDetails) => ({
+      ...prevDetails,
+      [id]: value
+    }));
+    if (errors[id]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
+  };
+
+  const validate = () => {
+    const errors = {};
+    if (!rateDetails.chargeCode) errors.chargeCode = "Charge Code is required.";
+    if (!rateDetails.chargeName) errors.chargeName = "Charge Name is required.";
+    if (!rateDetails.chargegstpercentage) errors.chargegstpercentage = "GST is required.";
+    if (!rateDetails.chargesaccode) errors.chargesaccode = "SAC Code is required.";
+    return errors;
   };
 
   return (
     <div className="step-container">
-      <h2>Rate Details</h2>
+      <h2>Charge Details</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="chargeCode">Charge Code</label>
           <input
             type="text"
             id="chargeCode"
-            value={chargeCode}
-            onChange={(e) => setChargeCode(e.target.value)}
+            value={rateDetails.chargeCode}
+            onChange={handleChange}
+            className={errors.chargeCode ? "error" : ""}
           />
         </div>
         <div className="form-group">
@@ -38,25 +111,26 @@ const RateDetails = () => {
           <input
             type="text"
             id="chargeName"
-            value={chargeName}
-            onChange={(e) => setChargeName(e.target.value)}
+            value={rateDetails.chargeName}
+            onChange={handleChange}
+            className={errors.chargeName ? "error" : ""}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="ledgerName">Ledger Name (Tally)</label>
+          <label htmlFor="chargeledger">Ledger Name (Tally)</label>
           <input
             type="text"
-            id="ledgerName"
-            value={ledgerName}
-            onChange={(e) => setLedgerName(e.target.value)}
+            id="chargeledger"
+            value={rateDetails.chargeledger}
+            onChange={handleChange}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="currency">Currency</label>
+          <label htmlFor="chargecurrency">Currency</label>
           <select
-            id="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
+            id="chargecurrency"
+            value={rateDetails.chargecurrency}
+            onChange={handleChange}
             className="form-control"
           >
             <option value="INR">INR</option>
@@ -65,11 +139,11 @@ const RateDetails = () => {
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="typeChg">Type CHG</label>
+          <label htmlFor="chargetype">Charge Type</label>
           <select
-            id="typeChg"
-            value={typeChg}
-            onChange={(e) => setTypeChg(e.target.value)}
+            id="chargetype"
+            value={rateDetails.chargetype}
+            onChange={handleChange}
             className="form-control"
           >
             <option value="Freight">Freight</option>
@@ -77,36 +151,34 @@ const RateDetails = () => {
           </select>
         </div>
         <div className="form-group radio-group">
-          <label>GST</label>
           <div className="radio-options">
+            <label>GST</label>
             <label>
               <input
                 type="radio"
-                name="gst"
+                name="chargegst"
                 value="yes"
-                checked={gst === "yes"}
-                onChange={() => setGst("yes")}
-              />
-              Yes
+                checked={rateDetails.chargegst === "yes"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "yes" }))}
+              /> Yes
             </label>
             <label>
               <input
                 type="radio"
-                name="gst"
+                name="chargegst"
                 value="no"
-                checked={gst === "no"}
-                onChange={() => setGst("no")}
-              />
-              No
+                checked={rateDetails.chargegst === "no"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "no" }))}
+              /> No
             </label>
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="gstPercentage">GST %</label>
+          <label htmlFor="chargegstpercentage">GST %</label>
           <select
-            id="gstPercentage"
-            value={gstPercentage}
-            onChange={(e) => setGstPercentage(e.target.value)}
+            id="chargegstpercentage"
+            value={rateDetails.chargegstpercentage}
+            onChange={handleChange}
             className="form-control"
           >
             <option value="0">0</option>
@@ -116,11 +188,11 @@ const RateDetails = () => {
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="vatPercentage">VAT %</label>
+          <label htmlFor="chargevat">VAT %</label>
           <select
-            id="vatPercentage"
-            value={vatPercentage}
-            onChange={(e) => setVatPercentage(e.target.value)}
+            id="chargevat"
+            value={rateDetails.chargevat}
+            onChange={handleChange}
             className="form-control"
           >
             <option value="0">0</option>
@@ -129,59 +201,61 @@ const RateDetails = () => {
           </select>
         </div>
         <div className="form-group radio-group">
-          <label>Formula (Y/N)</label>
           <div className="radio-options">
+            <label>Formula</label>
             <label>
               <input
                 type="radio"
-                name="formula"
+                name="chargeformula"
                 value="yes"
-                checked={formula === "yes"}
-                onChange={() => setFormula("yes")}
+                checked={rateDetails.chargeformula === "yes"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargeformula: "yes" }))}
               />
               Yes
             </label>
             <label>
               <input
                 type="radio"
-                name="formula"
+                name="chargeformula"
                 value="no"
-                checked={formula === "no"}
-                onChange={() => setFormula("no")}
+                checked={rateDetails.chargeformula === "no"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargeformula: "no" }))}
               />
               No
             </label>
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="limit">Limit</label>
+          <label htmlFor="chargelimit">Limit</label>
           <input
             type="text"
-            id="limit"
-            value={limit}
-            onChange={(e) => setLimit(e.target.value)}
+            id="chargelimit"
+            value={rateDetails.chargelimit}
+            onChange={handleChange}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="percentage">Percentage</label>
+          <label htmlFor="chargepercentage">Percentage</label>
           <input
             type="text"
-            id="percentage"
-            value={percentage}
-            onChange={(e) => setPercentage(e.target.value)}
+            id="chargepercentage"
+            value={rateDetails.chargepercentage}
+            onChange={handleChange}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="sacCode">SAC Code</label>
+          <label htmlFor="chargesaccode">SAC Code</label>
           <input
             type="text"
-            id="sacCode"
-            value={sacCode}
-            onChange={(e) => setSacCode(e.target.value)}
+            id="chargesaccode"
+            value={rateDetails.chargesaccode}
+            onChange={handleChange}
+            className={errors.sacCode ? "error" : ""}
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit">Save</button>
       </form>
+      {showPopup && <ValidationPopup errors={errors} onClose={() => setShowPopup(false)} />}
     </div>
   );
 };

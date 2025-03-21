@@ -17,6 +17,7 @@ import { resetState } from './redux/actions/authActions';
 import PortDetails from "./components/AnchorData/PortDetails";
 import PortDetailsSearch from "./components/AnchorData/PortDetailsSearch";
 import PackageDetails from "./components/AnchorData/PackageDetails";
+import PackageDetailsSearch from "./components/AnchorData/PackageDetailsSearch";
 import ShippingLineDetails from "./components/AnchorData/ShippingLineDetails";
 import CommodityDetails from "./components/AnchorData/CommodityDetails";
 import RateDetails from "./components/AnchorData/RateDetails";
@@ -59,7 +60,11 @@ import Dashboard from "./components/Dashboard";
 import VesselDetailsSearch from "./components/AnchorData/VesselDetailsSearch";
 import ShipperDetailsSearch from "./components/AnchorData/ShipperDetailsSearch";
 import ConsigneeDetailsSearch from "./components/AnchorData/ConsigneeDetailsSearch";
-import NotifySearchDetails from "./components/AnchorData/NotifySearchDetails"; // Import NotifySearchDetails
+import NotifySearchDetails from "./components/AnchorData/NotifySearchDetails";
+import ShippingLineDetailsSearch from "./components/AnchorData/ShippingLineDetailsSearch"; // Ensure this import is correct
+import CommodityDetailsSearch from "./components/AnchorData/CommodityDetailsSearch";
+import RateSearchDetails from "./components/AnchorData/RateSearchDetails";
+import ContainerDetailsSearch from "./components/AnchorData/ContainerDetailsSearch";
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -234,10 +239,15 @@ const App = () => {
             <Route path="/port-details" element={<PortDetails />} />
             <Route path="/port-details-search" element={<PortDetailsSearch />} />
             <Route path="/package-details" element={<PackageDetails />} />
+            <Route path="/package-details-search" element={<PackageDetailsSearch />} />
             <Route path="/shipping-line-details" element={<ShippingLineDetails />} />
+            <Route path="/shipping-line-details-search" element={<ShippingLineDetailsSearch />} />
             <Route path="/commodity-details" element={<CommodityDetails />} />
+            <Route path="/commodity-details-search" element={<CommodityDetailsSearch />} />
             <Route path="/rate-details" element={<RateDetails />} />
+            <Route path="/rate-details-search" element={<RateSearchDetails />} />
             <Route path="/container-details" element={<ContainerDetails />} />
+            <Route path="/container-details-search" element={<ContainerDetailsSearch />} />
             <Route path="/bank-details" element={<BankDetails />} />
             <Route path="/enquiry-details" element={<EnquiryDetails />} />
             <Route path="/selling-rate" element={<SellingRate />} />

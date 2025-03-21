@@ -53,7 +53,6 @@
 }
 
 .form-group input[type="password"] {
-  width: 95%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -73,8 +72,4 @@
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-}
-
-.login-button:hover {
-  background-color: #218838;
 }

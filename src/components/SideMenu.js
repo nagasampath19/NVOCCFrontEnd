@@ -181,6 +181,101 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
     }
   };
 
+  const handlePackageDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/packagedetailscount`,{}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/package-details-search");
+      } else {
+        navigate("/package-details");
+      }
+    } catch (error) {
+      console.error("Error checking package details count: ", error);
+      navigate("/package-details");
+    }
+  };
+
+  const handleShippinglineDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/shippinglinedetailscount`,{}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/shipping-line-details-search");
+      } else {
+        navigate("/shipping-line-details");
+      }
+    } catch (error) {
+      console.error("Error checking shippingline details count: ", error);
+      navigate("/shipping-line-details");
+    }
+  };
+
+  const handleCommodityDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/commoditydetailscount`,{}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/commodity-details-search");
+      } else {
+        navigate("/commodity-details");
+      }
+    } catch (error) {
+      console.error("Error checking commodity details count: ", error);
+      navigate("/commodity-details");
+    }
+  };
+
+  const handleChargeDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Anchordata/Charges/Chargesdetailscount`,{ user_id: userId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/rate-details-search");
+      } else {
+        navigate("/rate-details");
+      }
+    } catch (error) {
+      console.error("Error checking rate details count: ", error);
+      navigate("/rate-details");
+    }
+  };
+  
+  const handleContainerDetailsClick = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Container/Containerdetailscount`,{ user_id: userId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data > 0) {
+        navigate("/container-details-search");
+      } else {
+        navigate("/container-details");
+      }
+    } catch (error) {
+      console.error("Error checking container details count: ", error);
+      navigate("/container-details");
+    }
+  };
+
   return (
     <nav className={`side-menu ${isMenuOpen ? "open" : ""}`}>
       <ul className="tree">
@@ -418,27 +513,27 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/package-details" className={`submenu-item ${getActiveClass("/package-details")}`}>
+              <NavLink to="/package-details" onClick={handlePackageDetailsClick} className={`submenu-item ${getActiveClass("/package-details") || getActiveClass("/package-details-search")}`}>
                 Package Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/shipping-line-details" className={`submenu-item ${getActiveClass("/shipping-line-details")}`}>
+              <NavLink to="/shipping-line-details" onClick={handleShippinglineDetailsClick} className={`submenu-item ${getActiveClass("/shipping-line-details") || getActiveClass("/shipping-line-details-search")}`}>
                 Shipping Line Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/commodity-details" className={`submenu-item ${getActiveClass("/commodity-details")}`}>
+              <NavLink to="/commodity-details" onClick={handleCommodityDetailsClick} className={`submenu-item ${getActiveClass("/commodity-details") || getActiveClass("/commodity-details-search")}`}>
                 Commodity Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/rate-details" className={`submenu-item ${getActiveClass("/rate-details")}`}>
-                Rate Details
+              <NavLink to="/rate-details" onClick={handleChargeDetailsClick} className={`submenu-item ${getActiveClass("/rate-details") || getActiveClass("/rate-details-search")}`}>
+                Charges
               </NavLink>
             </li>
             <li>
-              <NavLink to="/container-details" className={`submenu-item ${getActiveClass("/container-details")}`}>
+              <NavLink to="/container-details" onClick={handleContainerDetailsClick} className={`submenu-item ${getActiveClass("/container-details")|| getActiveClass("/container-details-search")}`}>
                 Container Details
               </NavLink>
             </li>
