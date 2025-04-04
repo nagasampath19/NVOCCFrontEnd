@@ -5,14 +5,21 @@ import jwtDecode from "jwt-decode";
 import { API_URLS } from "../config/urls";
 
 const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
+  const [enquiryReferenceID, setEnquiryReferenceID] = useState(null);
+  const [sellerRateReferenceID, setSellerRateReferenceID] = useState(null);
+  const [buyingRateReferenceID, setBuyingRateReferenceID] = useState(null);
+  const [cro_id, setCROId] = useState(null);
+  const [crocargo_id, setCROCargoId] = useState(null);
+  const [party_id, setParty_id] = useState(null);
+  const [port, setPort] = useState(null);
   const [isAnchorDataCollapsed, setIsAnchorDataCollapsed] = useState(false);
   const [isBLManagementCollapsed, setIsBLManagementCollapsed] = useState(false);
-  const [isEnquiryCollapsed, setIsEnquiryCollapsed] = useState(false); // New state for Enquiry
-  const [isContainerReleaseOrderCollapsed, setIsContainerReleaseOrderCollapsed] = useState(false); // New state for Container Release Order
-  const [isImportBLCollapsed, setIsImportBLCollapsed] = useState(false); // New state for Import BL
-  const [isAccountsCollapsed, setIsAccountsCollapsed] = useState(false); // New state for Accounts
-  const [isImportAccountsCollapsed, setIsImportAccountsCollapsed] = useState(false); // New state for Import Accounts
-  const [isExportBLCollapsed, setIsExportBLCollapsed] = useState(false); // New state for Export BL
+  const [isEnquiryCollapsed, setIsEnquiryCollapsed] = useState(false);
+  const [isContainerReleaseOrderCollapsed, setIsContainerReleaseOrderCollapsed] = useState(false);
+  const [isImportBLCollapsed, setIsImportBLCollapsed] = useState(false);
+  const [isAccountsCollapsed, setIsAccountsCollapsed] = useState(false);
+  const [isImportAccountsCollapsed, setIsImportAccountsCollapsed] = useState(false);
+  const [isExportBLCollapsed, setIsExportBLCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const urls = API_URLS;
@@ -22,7 +29,23 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const userId = decodedToken.user_id;
 
   useEffect(() => {
-    // Collapse all menus except BL Management on login
+    const queryParams = new URLSearchParams(location.search);
+    const enquiryID = queryParams.get("enquiryReferenceID");
+    const sellerRateID = queryParams.get("sellerRateReferenceID");
+    const buyingRateID = queryParams.get("buyingRateReferenceID");
+    const cro_id = queryParams.get("cro_id");
+    const crocargo_id = queryParams.get("crocargo_id");
+    const party_id = queryParams.get("party_id");
+    const port = queryParams.get("port");
+
+    setEnquiryReferenceID(enquiryID !== 'null' ? enquiryID : 0); // Corrected logic
+    setSellerRateReferenceID(sellerRateID !== 'null' ? sellerRateID : 0);
+    setBuyingRateReferenceID(buyingRateID !== 'null' ? buyingRateID : 0);
+    setCROId(cro_id !== 'null' ? cro_id : 0);
+    setCROCargoId(crocargo_id !== 'null' ? crocargo_id : 0);
+    setParty_id(party_id !== 'null' ? party_id : 0);
+    setPort(port !== 'null' ? port : 0);
+
     setIsAnchorDataCollapsed(true);
     setIsBLManagementCollapsed(false);
     setIsEnquiryCollapsed(true);
@@ -34,20 +57,19 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    // Expand the corresponding node when a link is clicked
-    if (currentPath.startsWith("/enquiry") || currentPath.startsWith("/selling-rate") || currentPath.startsWith("/buying-rate") || currentPath.startsWith("/estimation")) {
+    if (currentPath && (currentPath.startsWith("/enquiry") || currentPath.startsWith("/selling-rate") || currentPath.startsWith("/buying-rate") || currentPath.startsWith("/estimation"))) {
       setIsEnquiryCollapsed(false);
-    } else if (currentPath.startsWith("/container-release-order") || currentPath.startsWith("/cargo-details") || currentPath.startsWith("/overseas-agent") || currentPath.startsWith("/party") || currentPath.startsWith("/CROPort") || currentPath.startsWith("/crocontainer-details")) {
+    } else if (currentPath && (currentPath.startsWith("/container-release-order") || currentPath.startsWith("/cargo-details") || currentPath.startsWith("/overseas-agent") || currentPath.startsWith("/party") || currentPath.startsWith("/CROPort") || currentPath.startsWith("/crocontainer-details"))) {
       setIsContainerReleaseOrderCollapsed(false);
-    } else if (currentPath.startsWith("/import-bl") || currentPath.startsWith("/importbl-vessel-details") || currentPath.startsWith("/importbl-port-details") || currentPath.startsWith("/importbl-party-details") || currentPath.startsWith("/importbl-shipment-details") || currentPath.startsWith("/hsn-details") || currentPath.startsWith("/importbl-container-details")) {
+    } else if (currentPath && (currentPath.startsWith("/import-bl") || currentPath.startsWith("/importbl-vessel-details") || currentPath.startsWith("/importbl-port-details") || currentPath.startsWith("/importbl-party-details") || currentPath.startsWith("/importbl-shipment-details") || currentPath.startsWith("/hsn-details") || currentPath.startsWith("/importbl-container-details"))) {
       setIsImportBLCollapsed(false);
-    } else if (currentPath.startsWith("/export-bl") || currentPath.startsWith("/exportbl-cargo-details") || currentPath.startsWith("/exportbl-overseas-agent") || currentPath.startsWith("/exportbl-port-details") || currentPath.startsWith("/exportbl-vessel-details") || currentPath.startsWith("/exportbl-other-details") || currentPath.startsWith("/exportbl-container-details")) {
+    } else if (currentPath && (currentPath.startsWith("/export-bl") || currentPath.startsWith("/exportbl-cargo-details") || currentPath.startsWith("/exportbl-overseas-agent") || currentPath.startsWith("/exportbl-port-details") || currentPath.startsWith("/exportbl-vessel-details") || currentPath.startsWith("/exportbl-other-details") || currentPath.startsWith("/exportbl-container-details"))) {
       setIsExportBLCollapsed(false);
-    } else if (currentPath.startsWith("/accounts") || currentPath.startsWith("/sales-invoice") || currentPath.startsWith("/purchase-invoice") || currentPath.startsWith("/proforma-invoice") || currentPath.startsWith("/purchase-payment")) {
+    } else if (currentPath && (currentPath.startsWith("/accounts") || currentPath.startsWith("/sales-invoice") || currentPath.startsWith("/purchase-invoice") || currentPath.startsWith("/proforma-invoice") || currentPath.startsWith("/purchase-payment"))) {
       setIsAccountsCollapsed(false);
-    } else if (currentPath.startsWith("/import-accounts") || currentPath.startsWith("/sales-fixed-charges") || currentPath.startsWith("/purchase-fixed-charges")) {
+    } else if (currentPath && (currentPath.startsWith("/import-accounts") || currentPath.startsWith("/sales-fixed-charges") || currentPath.startsWith("/purchase-fixed-charges"))) {
       setIsImportAccountsCollapsed(false);
-    } else if (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/vessel-details-search") || currentPath.startsWith("/port-details") || currentPath.startsWith("/port-details-search") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details") || currentPath.startsWith("/notify-details-search")) {
+    } else if (currentPath && (currentPath.startsWith("/anchor-data") || currentPath.startsWith("/shipper-details") || currentPath.startsWith("/consignee-details") || currentPath.startsWith("/notify-parties") || currentPath.startsWith("/vessel-details") || currentPath.startsWith("/vessel-details-search") || currentPath.startsWith("/port-details") || currentPath.startsWith("/port-details-search") || currentPath.startsWith("/package-details") || currentPath.startsWith("/shipping-line-details") || currentPath.startsWith("/commodity-details") || currentPath.startsWith("/rate-details") || currentPath.startsWith("/container-details") || currentPath.startsWith("/bank-details") || currentPath.startsWith("/notify-details-search"))) {
       setIsAnchorDataCollapsed(false);
     }
   }, [currentPath]);
@@ -184,7 +206,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const handlePackageDetailsClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/packagedetailscount`,{}, {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/packagedetailscount`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -203,7 +225,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const handleShippinglineDetailsClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/shippinglinedetailscount`,{}, {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/shippinglinedetailscount`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -222,7 +244,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const handleCommodityDetailsClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/commoditydetailscount`,{}, {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/anchordata/commoditydetailscount`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -241,7 +263,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
   const handleChargeDetailsClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(`${urls.BASE_URL}/blapi/Anchordata/Charges/Chargesdetailscount`,{ user_id: userId }, {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Anchordata/Charges/Chargesdetailscount`, { user_id: userId }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -256,11 +278,11 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
       navigate("/rate-details");
     }
   };
-  
+
   const handleContainerDetailsClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(`${urls.BASE_URL}/blapi/Container/Containerdetailscount`,{ user_id: userId }, {
+      const response = await axios.post(`${urls.BASE_URL}/blapi/Container/Containerdetailscount`, { user_id: userId }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -276,6 +298,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
     }
   };
 
+
   return (
     <nav className={`side-menu ${isMenuOpen ? "open" : ""}`}>
       <ul className="tree">
@@ -290,22 +313,31 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </span>
               <ul className={`nested ${isEnquiryCollapsed ? "collapsed" : ""}`}>
                 <li>
-                  <NavLink to="/enquiry-details" className={`submenu-item ${getActiveClass("/enquiry-details")}`}>
-                    General Enquiry
+                  <NavLink to={`/enquiry-search?user_id=${userId}`} className={`submenu-item ${getActiveClass("/enquiry-search")}`} >
+                    Enquiries
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/selling-rate" className={`submenu-item ${getActiveClass("/selling-rate")}`}>
+                  <NavLink to={`/enquiry-details?enquiryReferenceID=${enquiryReferenceID}`} className={`submenu-item ${getActiveClass("/enquiry-details")}`} >
+                    New Enquiry
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/selling-rate?enquiryReferenceID=${enquiryReferenceID}`}
+                    className={`submenu-item ${getActiveClass("/selling-rate")}`}
+                    style={{ pointerEvents: enquiryReferenceID > 0 ? "auto" : "none", opacity: enquiryReferenceID > 0 ? 1 : 0.5 }}
+                  >
                     Selling Rates
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/buying-rate" className={`submenu-item ${getActiveClass("/buying-rate")}`}>
+                  <NavLink to={`/buying-rate?enquiryReferenceID=${enquiryReferenceID}&sellerRateReferenceID=${sellerRateReferenceID}`} className={`submenu-item ${getActiveClass("/buying-rate")}`} style={{ pointerEvents: enquiryReferenceID && sellerRateReferenceID ? "auto" : "none", opacity: enquiryReferenceID && sellerRateReferenceID ? 1 : 0.5 }}>
                     Buying Rates
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/estimation" className={`submenu-item ${getActiveClass("/estimation")}`}>
+                  <NavLink to={`/estimation?enquiryReferenceID=${enquiryReferenceID}&sellerRateReferenceID=${sellerRateReferenceID}&buyingRateReferenceID=${buyingRateReferenceID}`} className={`submenu-item ${getActiveClass("/estimation")}`} style={{ pointerEvents: enquiryReferenceID && sellerRateReferenceID && buyingRateReferenceID ? "auto" : "none", opacity: enquiryReferenceID && sellerRateReferenceID && buyingRateReferenceID ? 1 : 0.5 }}>
                     Estimation
                   </NavLink>
                 </li>
@@ -317,27 +349,34 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </span>
               <ul className={`nested ${isContainerReleaseOrderCollapsed ? "collapsed" : ""}`}>
                 <li>
-                  <NavLink to="/container-release-order" className={`submenu-item ${getActiveClass("/container-release-order")}`}>
-                    General Details
+                  <NavLink to={`/container-release-order?cro_id=${cro_id}`} className={`submenu-item ${getActiveClass("/container-release-order")}`}>
+                    New CRO
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/cargo-details" className={`submenu-item ${getActiveClass("/cargo-details")}`}>
+                <NavLink
+                    to={`/cargo-details?cro_id=${cro_id}&crocargo_id=${crocargo_id}`}
+                    className={`submenu-item ${getActiveClass("/cargo-details")}`}
+                    style={{ pointerEvents: cro_id > 0 && crocargo_id ? "auto" : "none", opacity: cro_id > 0 && crocargo_id ? 1 : 0.5 }}
+                    >
                     Cargo Details
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/overseas-agent" className={`submenu-item ${getActiveClass("/overseas-agent")}`}>
-                    Overseas Agent
+                <NavLink
+                    to={`/party?cro_id=${cro_id}&crocargo_id=${crocargo_id}`}
+                    className={`submenu-item ${getActiveClass("/party")}`}
+                    style={{ pointerEvents: cro_id > 0 && crocargo_id > 0 && party_id ? "auto" : "none", opacity: cro_id > 0 && crocargo_id > 0 && party_id ? 1 : 0.5 }}
+                    >
+                     Party Details
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/party" className={`submenu-item ${getActiveClass("/party")}`}>
-                    Party Details
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/CROPort" className={`submenu-item ${getActiveClass("/CROPort")}`}>
+                <NavLink
+                    to={`/CROPort?cro_id=${cro_id}&crocargo_id=${crocargo_id}`}
+                    className={`submenu-item ${getActiveClass("/CROPort")}`}
+                    style={{ pointerEvents: cro_id > 0 && crocargo_id > 0 && party_id > 0 && port ? "auto" : "none", opacity: cro_id > 0 && crocargo_id > 0 && party_id > 0 && port ? 1 : 0.5 }}
+                    >
                     Port Details
                   </NavLink>
                 </li>
@@ -533,7 +572,7 @@ const SideMenu = ({ showStep, currentPath, isMenuOpen }) => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/container-details" onClick={handleContainerDetailsClick} className={`submenu-item ${getActiveClass("/container-details")|| getActiveClass("/container-details-search")}`}>
+              <NavLink to="/container-details" onClick={handleContainerDetailsClick} className={`submenu-item ${getActiveClass("/container-details") || getActiveClass("/container-details-search")}`}>
                 Container Details
               </NavLink>
             </li>

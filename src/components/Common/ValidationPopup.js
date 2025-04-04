@@ -26,7 +26,9 @@ const ValidationPopup = ({ errors, onClose }) => {
             <li key={key} style={{ marginBottom: "10px" }}>{errors[key]}</li>
           ))}
         </ul>
-        <button onClick={closePopup} style={{ float: "right" }}>Close</button>
+        <div style={{ textAlign: "center", marginTop: "25px" }}>
+          <button onClick={closePopup}>Close</button>
+        </div>
       </div>
     </div>
   );

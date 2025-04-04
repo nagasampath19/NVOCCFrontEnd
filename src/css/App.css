@@ -16,13 +16,19 @@ body {
 }
 
 header {
-  background-color: #28a745;
-  color: white;
   padding: 15px 20px;
   display: flex;
   align-items: center;
   justify-content: center; /* Center the title */
   position: relative;
+  background-color: #021427; /* Set a specific background color */
+}
+
+header .logo {
+  position: absolute;
+  left: 20px; /* Position the logo to the left */
+  height: 40px; /* Adjust the height of the logo */
+  width: auto; /* Maintain aspect ratio */
 }
 
 header h1 {
@@ -47,6 +53,69 @@ header h1 {
   align-items: center;
   position: absolute;
   right: 20px; /* Position the header-right div to the right */
+}
+
+.header-right .profile-menu {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  gap: 0; /* Remove any gap between the icon and the profile name */
+}
+
+.header-right .profile-menu img {
+  height: 40px; /* Profile picture size */
+  width: 40px;
+  border-radius: 50%; /* Make it circular */
+  margin-right: 5px; /* Reduce spacing between the icon and the profile name */
+}
+
+.header-right .profile-menu .profile-name {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.header-right .profile-menu .profile-icon {
+  font-size: 24px; /* Adjust icon size */
+  color: white; /* Match the header text color */
+  margin-right: 5px; /* Reduce spacing between the icon and the profile name */
+}
+
+.header-right .profile-menu .dropdown {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 100%; /* Position the dropdown directly below the profile menu */
+  margin-top: 0px; /* Remove any gap between the header and the dropdown */
+  border-top: none; /* Remove border at the top to visually connect */
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1000;
+  pointer-events: auto; /* Ensure dropdown is interactive */
+}
+
+.header-right .profile-menu:hover .dropdown {
+  display: block; /* Show dropdown on hover */
+}
+
+.header-right .profile-menu .dropdown a {
+  display: block;
+  padding: 10px 20px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.header-right .profile-menu .dropdown a:hover {
+  background-color: #f4f4f4;
+}
+
+.header-right .profile-menu:hover .dropdown,
+.header-right .profile-menu .dropdown:hover {
+  display: block; /* Keep the dropdown visible when hovered */
 }
 
 .header-left {
@@ -111,13 +180,13 @@ header h1 {
 label {
   display: block;
   margin-top: 10px;
-  text-align: left; /* Ensure labels are left-aligned */
+  text-align: left;  
 }
 
 label.error {
   display: block;
   color: red;
-  text-align: left; /* Ensure labels are left-aligned */
+  text-align: left;  
 }
 
 input[type="text"],
@@ -131,11 +200,13 @@ textarea {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
+  font-family: inherit; 
+  font-size: inherit; 
 }
 
 input.error,
 textarea.error {
-  border: 1px solid red; /* Add red border for error fields */
+  border: 1px solid red; 
 }
 
 textarea {
@@ -151,20 +222,28 @@ textarea {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+  gap: 20px; /* Add space between buttons */
 }
 .firstnavigation{
-  text-align: right;
   justify-content: space-between;
   margin-top: 20px;
 }
 button {
   padding: 10px 20px;
-  background-color: #007bff;
+  /* background-color: #004182; */
+  background-color: #022953;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
+  width: 100%; /* Make the button take full width of its container */
+  max-width: 300px; /* Set a maximum width for the button */
+  margin: 0 auto; /* Center the button horizontally */
+  padding: 20px; /* Increase padding for a larger appearance */
+  font-size: 18px; /* Increase font size */
+  border-radius: 0; /* Remove rounded corners for a flat rectangle look */
+  text-align: center; /* Center the text */
 }
 
 button.previous {
@@ -198,6 +277,15 @@ button:hover {
     }
   .container {
     margin-left: 0;
+  }
+
+  .navigation {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    align-items: center; /* Center align the buttons */
+  }
+
+  button {
+    width: 90%; /* Reduce button width for smaller screens */
   }
 }
 /* HS Code Search Styles */
@@ -298,7 +386,7 @@ border-bottom: none;
 
 .modal-content .close-modal-button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #004182;
   color: white;
   border: none;
   border-radius: 4px;

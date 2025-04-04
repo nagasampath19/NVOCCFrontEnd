@@ -21,13 +21,14 @@ import PackageDetailsSearch from "./components/AnchorData/PackageDetailsSearch";
 import ShippingLineDetails from "./components/AnchorData/ShippingLineDetails";
 import CommodityDetails from "./components/AnchorData/CommodityDetails";
 import RateDetails from "./components/AnchorData/RateDetails";
-import CROContainerDetails from "./components/MainComponents/CROContainerDetails";
+import CROContainerDetails from "./components/MainComponents/CRO/CROContainerDetails";
 import BankDetails from "./components/AnchorData/BankDetails";
-import EnquiryDetails from "./components/MainComponents/EnquiryDetails";
-import SellingRate from "./components/MainComponents/SellingRate";
-import BuyingRate from "./components/MainComponents/BuyingRate";
-import Estimation from "./components/MainComponents/Estimation";
-import ContainerReleaseOrder from "./components/MainComponents/ContainerReleaseOrder";
+import EnquirySearch from "./components/MainComponents/Enquiry/EnquirySearch";
+import EnquiryDetails from "./components/MainComponents/Enquiry/EnquiryDetails";
+import SellingRate from "./components/MainComponents/Enquiry/SellingRate";
+import BuyingRate from "./components/MainComponents/Enquiry/BuyingRate";
+import Estimation from "./components/MainComponents/Enquiry/Estimation";
+import ContainerReleaseOrder from "./components/MainComponents/CRO/ContainerReleaseOrder";
 import ExportBL from "./components/MainComponents/ExportBL";
 import ImportBL from "./components/MainComponents/ImportBL";
 import IGMUpdate from "./components/MainComponents/IGMUpdate";
@@ -40,10 +41,9 @@ import PurchasePayment from "./components/MainComponents/PurchasePayment";
 import OtherCharges from "./components/MainComponents/OtherCharges";
 import SalesFixedCharges from "./components/MainComponents/SalesFixedCharges";
 import PurchaseFixedCharges from "./components/MainComponents/PurchaseFixedCharges";
-import CargoDetails from "./components/MainComponents/CargoDetails";
-import OverseasAgent from "./components/MainComponents/OverseasAgent";
-import CROPort from "./components/MainComponents/CROPort";
-import Party from "./components/MainComponents/Party";
+import CargoDetails from "./components/MainComponents/CRO/CargoDetails";
+import CROPort from "./components/MainComponents/CRO/CROPort";
+import Party from "./components/MainComponents/CRO/Party";
 import ImportBLVesselDetails from "./components/MainComponents/VesselDetails";
 import ImportBLPortDetails from "./components/MainComponents/PortDetails";
 import ImportBLPartyDetails from "./components/MainComponents/ImportBLPartyDetails";
@@ -61,12 +61,12 @@ import VesselDetailsSearch from "./components/AnchorData/VesselDetailsSearch";
 import ShipperDetailsSearch from "./components/AnchorData/ShipperDetailsSearch";
 import ConsigneeDetailsSearch from "./components/AnchorData/ConsigneeDetailsSearch";
 import NotifySearchDetails from "./components/AnchorData/NotifySearchDetails";
-import ShippingLineDetailsSearch from "./components/AnchorData/ShippingLineDetailsSearch"; // Ensure this import is correct
+import ShippingLineDetailsSearch from "./components/AnchorData/ShippingLineDetailsSearch"; 
 import CommodityDetailsSearch from "./components/AnchorData/CommodityDetailsSearch";
 import RateSearchDetails from "./components/AnchorData/RateSearchDetails";
 import ContainerDetailsSearch from "./components/AnchorData/ContainerDetailsSearch";
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children, enquiryReferenceID }) => {
   const location = useLocation();
   const isLoginPage = location.pathname === "/";
   const navigate = useNavigate();
@@ -123,94 +123,12 @@ const AppLayout = ({ children }) => {
         }
       });
   };
-
-  const showStep = (step) => {
-    switch (step) {
-      case 1:
-        navigate("/shipper-details");
-        break;
-      case 2:
-        navigate("/consignee-details");
-        break;
-      case 3:
-        navigate("/notify-parties");
-        break;
-      case 4:
-        navigate("/vessel-details");
-        break;
-      case 5:
-        navigate("/port-details");
-        break;
-      case 6:
-        navigate("/package-details");
-        break;
-      case 7:
-        navigate("/shipping-line-details");
-        break;
-      case 8:
-        navigate("/commodity-details");
-        break;
-      case 9:
-        navigate("/rate-details");
-        break;
-      case 10:
-        navigate("/container-details");
-        break;
-      case 11:
-        navigate("/bank-details");
-        break;
-      case 12:
-        navigate("/enquiry-details");
-        break;
-      case 13:
-        navigate("/container-release-order");
-        break
-      case 14:
-        navigate("/export-bl");
-        break;
-      case 15:
-        navigate("/import-bl");
-        break;
-      case 16:
-        navigate("/igm-update");
-        break;
-      case 17:
-        navigate("/detention");
-        break;
-      case 18:
-          navigate("/detention-proforma");
-          break;
-      case 19:
-            navigate("/sales-invoice");
-            break;  
-      case 20:
-            navigate("/purchase-invoice");
-            break;      
-      case 20:
-        navigate("/proforma-invoice");
-        break;    
-      case 21:
-        navigate("/purchase-payment");
-        break;                                        
-      case 22:
-        navigate("/other-charges");
-        break;                                
-      case 23:
-      navigate("/sales-fixed-charges");
-      break;   
-      case 24:
-        navigate("/purchase-fixed-charges");
-        break;   
-      default:
-        navigate("/shipper-details");
-    }
-  };
-
+  
   return (
     <div className="App">
       {!isLoginPage && <Header toggleMenu={toggleMenu} handleLogout={handleLogout} />}
       <div className="main-layout">
-        {!isLoginPage && <SideMenu showStep={showStep} currentPath={location.pathname} isMenuOpen={isMenuOpen} />}
+        {!isLoginPage && <SideMenu  currentPath={location.pathname} isMenuOpen={isMenuOpen} />}
         <main className="container">
           {children}
         </main>
@@ -218,6 +136,7 @@ const AppLayout = ({ children }) => {
     </div>
   );
 };
+
 
 const App = () => {
   return (
@@ -250,6 +169,7 @@ const App = () => {
             <Route path="/container-details-search" element={<ContainerDetailsSearch />} />
             <Route path="/bank-details" element={<BankDetails />} />
             <Route path="/enquiry-details" element={<EnquiryDetails />} />
+            <Route path="/enquiry-search" element={<EnquirySearch />} />
             <Route path="/selling-rate" element={<SellingRate />} />
             <Route path="/buying-rate" element={<BuyingRate />} />
             <Route path="/estimation" element={<Estimation />} />
@@ -267,7 +187,6 @@ const App = () => {
             <Route path="/sales-fixed-charges" element={<SalesFixedCharges />} />
             <Route path="/purchase-fixed-charges" element={<PurchaseFixedCharges />} />
             <Route path="/cargo-details" element={<CargoDetails />} />
-            <Route path="/overseas-agent" element={<OverseasAgent />} />
             <Route path="/CROPort" element={<CROPort />} />
             <Route path="/crocontainer-details" element={<CROContainerDetails />} />
             <Route path="/party" element={<Party />} />

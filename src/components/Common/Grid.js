@@ -12,7 +12,7 @@ const Grid = ({ columns, data, onEdit, onDelete }) => {
           {columns.map((column) => (
             <th key={column.name}>{column.label}</th>
           ))}
-          <th>Actions</th>
+          {data.length > 0 && <th>Actions</th>}
         </tr>
       </thead>
       <tbody>
@@ -27,6 +27,13 @@ const Grid = ({ columns, data, onEdit, onDelete }) => {
             </td>
           </tr>
         ))}
+        {data.length === 0 && (
+          <tr>
+            <td colSpan={columns.length} className="no-data">
+              No data available
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );

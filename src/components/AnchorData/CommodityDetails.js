@@ -1,10 +1,11 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { API_URLS } from "../../config/urls";
 import { useLocation, useNavigate } from "react-router-dom";
 import ValidationPopup from "../Common/ValidationPopup";
 
-const CommodityDetails = () => {
+const CommodityDetails = ({ onClose, onSave }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -17,11 +18,10 @@ const CommodityDetails = () => {
   });
 
   useEffect(() => {
-        if (location.state && location.state.commodityDetails) {
-          setCommodityDetails(location.state.commodityDetails);
-        }
-      }, [location.state]);
-    
+    if (location.state && location.state.commodityDetails) {
+      setCommodityDetails(location.state.commodityDetails);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,13 +37,24 @@ const CommodityDetails = () => {
           commodity_imocode: commodityDetails.commodityimocode,
           commodity_unocode: commodityDetails.commodityUnoCode
         };
-        const response = await axios.post(`${API_URLS.BASE_URL}/blapi/anchordata/savecommoditydetails`, tempCompDetails, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const response = await axios.post(
+          `${API_URLS.BASE_URL}/blapi/anchordata/savecommoditydetails`,
+          tempCompDetails,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
-        const searchParams = location.state?.searchParams || {};
-        navigate("/commodity-details-search", { state: { updatedCommodityDetailsDetails: response.data, searchParams } });
+        );
+        if (onSave) {
+          onSave(); 
+        }
+        if (onClose) {
+          onClose();
+        } else {
+          const searchParams = location.state?.searchParams || {};
+          navigate("/commodity-details-search", { state: { updatedCommodityDetailsDetails: response.data, searchParams } });
+        }
       } catch (error) {
         console.error("Error saving commodity details: ", error);
       }
@@ -113,6 +124,11 @@ const CommodityDetails = () => {
       {showPopup && <ValidationPopup errors={errors} onClose={() => setShowPopup(false)} />}
     </div>
   );
+};
+
+CommodityDetails.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func
 };
 
 export default CommodityDetails;

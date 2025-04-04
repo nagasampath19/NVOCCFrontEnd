@@ -173,16 +173,17 @@ const NotifyParties = () => {
             name="notifyPartyName"
             value={notifyPartyName}
             onChange={handleChange}
+            maxLength={250}
           />
         </div>
         <div className="form-group">
           <label htmlFor="notifyPartyAddress">Address</label>
-          <input
-            type="text"
+          <textarea
             id="notifyPartyAddress"
             name="notifyPartyAddress"
             value={notifyPartyAddress}
             onChange={handleChange}
+            maxLength={500}
           />
         </div>
         <div className="form-group">
@@ -193,6 +194,7 @@ const NotifyParties = () => {
             name="notifyPartyEmail"
             value={notifyPartyEmail}
             onChange={handleChange}
+            maxLength={250}
           />
         </div>
         <div className="form-group">
@@ -203,6 +205,7 @@ const NotifyParties = () => {
             name="notifyPartyPhone"
             value={notifyPartyPhone}
             onChange={handleChange}
+            maxLength={15}
           />
         </div>
         <button type="submit">Save</button>

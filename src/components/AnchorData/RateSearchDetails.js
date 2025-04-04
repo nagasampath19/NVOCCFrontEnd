@@ -12,24 +12,25 @@ const RateSearchDetails = () => {
   const [searchParams, setSearchParams] = useState({
     charge_code: "",
     charge_name: "",
-    charge_currency: "",
+    charge_currency: 0,
     charge_type: ""
   });
   const [errors, setErrors] = useState({});
   const [searchResults, setSearchResults] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [chargesToDelete, setChargesToDelete] = useState({});
+  const [currenciesOptions, setCurrenciesOptions] = useState([]);
 
   const columns = [
     { name: "chargeCode", label: "Code" },
     { name: "chargeName", label: "Name" },
-    { name: "chargecurrency", label: "Currency" },
+    { name: "currency_code", label: "Currency" },
     { name: "chargetype", label: "Type" },
     { name: "chargegstpercentage", label: "GST %" },
     { name: "chargeformula", label: "Formula" },
     { name: "chargepercentage", label: "Percentage" }
   ];
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (location.state) {
       if (location.state.updatedChargeDetails) {
@@ -46,13 +47,29 @@ const RateSearchDetails = () => {
     }
     if (location.state && location.state.searchParams) {
         const { charge_code, charge_name, charge_currency, charge_type } = location.state.searchParams;
-        setSearchParams({ charge_code: charge_code || "", charge_name: charge_name || "" , charge_currency: charge_currency || "", charge_type: charge_type || "" });
+        setSearchParams({ charge_code: charge_code || "", charge_name: charge_name || "" , charge_currency: charge_currency || 0, charge_type: charge_type || "" });
         handleSearch({ charge_code, charge_name, charge_currency, charge_type });
       }
+      fetchAllCurrencies();
+
   }, [location.state]);
 
+  const fetchAllCurrencies = async () => {
+      axios.post(`${API_URLS.BASE_URL}/blapi/anchordata/currencies`, {},
+        { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(response => {
+          const options = response.data.map(charge => ({
+            value: charge.currency_id,
+            label: charge.currency_code
+          }));
+          setCurrenciesOptions(options);
+        })
+        .catch(error => {
+          console.error("Error fetching container size details:", error);
+        });
+    };
+
   const handleEdit = async (row) => {
-    const token = localStorage.getItem("token");
     const { charge_code, charge_name, charge_currency, charge_type } = searchParams;
     try {
       const response = await axios.post(`${API_URLS.BASE_URL}/blapi/Anchordata/Charges/getChargesdetailsbyid`, { Charges_id: row.chargeId }, {
@@ -68,7 +85,6 @@ const RateSearchDetails = () => {
   };
 
   const handleDelete = async () => {
-    const token = localStorage.getItem("token");
     try {
       const searchParams = {
         commodity_id: chargesToDelete.chargeId
@@ -93,7 +109,6 @@ const RateSearchDetails = () => {
 
 
   const handleSearch = async (params) => {
-    const token = localStorage.getItem("token");
     try {
       const response = await axios.post(`${API_URLS.BASE_URL}/blapi/Anchordata/Charges/searchChargesdetails`, params, {
         headers: {
@@ -132,23 +147,26 @@ const RateSearchDetails = () => {
         </div>
         <div className="form-group">
           <label htmlFor="charge_currency">Charge Currency</label>
-          <input
-            type="text"
+          <select
             id="charge_currency"
-            value={searchParams.charge_currency || ""}
+            value={searchParams.charge_currency || 0}
             onChange={(e) => setSearchParams({ ...searchParams, charge_currency: e.target.value })}
-            className={errors.charge_currency ? "error" : ""}
-          />
+          >
+            <option value="">Select Currency</option>
+            {currenciesOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="charge_type">Charge Type</label>
-          <input
-            type="text"
+          <select
             id="charge_type"
             value={searchParams.charge_type || ""}
             onChange={(e) => setSearchParams({ ...searchParams, charge_type: e.target.value })}
-            className={errors.charge_type ? "error" : ""}
-          />
+          >
+            <option value="0">Select</option>
+            <option value="Freight">Freight</option>
+            <option value="Normal">Normal</option>
+          </select>
         </div>
         <button onClick={() => handleSearch(searchParams)}>Search</button>
       </div>

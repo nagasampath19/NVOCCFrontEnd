@@ -225,10 +225,6 @@ const ContainerDetails = () => {
       }
     });
     setContainerSizes(response.data); // Update container sizes state
-    setFormData((prevData) => ({
-      ...prevData,
-      container_sizeid: response.data[response.data.length - 1].containersize_id // Set the newly added container size as selected
-    }));
 
   };
   const handleClosePopup = () => {

@@ -1,0 +1,34 @@
+.popup-overlay {
+    position: fixed !important; /* Ensures it covers the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; /* Enables flexbox layout */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative; /* Allows absolute positioning of the close button */
+    max-width: 80%; /* Limit the width for better readability */
+    max-height: 80%; /* Limit the height for scrollable content */
+    overflow: auto; /* Enable scrolling if content overflows */
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Add your other styles here */

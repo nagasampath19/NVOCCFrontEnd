@@ -12,6 +12,7 @@ const Login = () => {
 
   useEffect(() => {
     localStorage.removeItem("token"); // Clear token on login screen
+    
   }, []);
 
   const handleLogin = async (e) => {
@@ -54,6 +55,7 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               required
+              autoFocus
             />
           </div>
           <div className="form-group">

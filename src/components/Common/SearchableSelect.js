@@ -12,7 +12,7 @@ const DropdownIndicator = (props) => {
   );
 };
 
-const SearchableSelect = ({ options, className, textValue, setTextValue, setIdValue }) => {
+const SearchableSelect = ({ options, className, textValue, setTextValue, setIdValue, isError }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const loadOptions = (inputValue, callback) => {
@@ -36,7 +36,6 @@ const SearchableSelect = ({ options, className, textValue, setTextValue, setIdVa
   };
 
   return (
-    <>
       <AsyncSelect
         cacheOptions
         loadOptions={loadOptions}
@@ -47,15 +46,16 @@ const SearchableSelect = ({ options, className, textValue, setTextValue, setIdVa
         getOptionValue={(option) => option.value} // Set value for the options
         value={selectedOption} // Set the selected value
         onChange={handleChange} // Ensure onChange is set
+        placeholder=""
         styles={{
-          control: (provided) => ({
+          control: (provided, state) => ({
             ...provided,
             width: "100%",
-            boxShadow: 'none', 
-            border: "1px solid #ddd",
+            boxShadow: 'none',
+            border: isError ? "1px solid red" : "1px solid #ddd", //Conditional border color
             borderRadius: "4px",
             textAlign: "left",
-            boxSizing: "border-box"
+            boxSizing: "border-box",
           }),
           singleValue: (provided) => ({
             ...provided,
@@ -63,16 +63,13 @@ const SearchableSelect = ({ options, className, textValue, setTextValue, setIdVa
           }),
           option: (provided, state) => ({
             ...provided,
-            backgroundColor: state.isSelected ? '#007bff' : state.isFocused ? '#e9ecef' : null,
+            backgroundColor: state.isSelected ? '#004182' : state.isFocused ? '#e9ecef' : null,
             color: state.isSelected ? 'white' : 'black',
             textAlign: 'left'
-          }),
-          indicatorSeparator: () => ({ // Remove the indicator separator
-            display: 'none'
-          })
+          }) 
         }}
       />
-    </>
+    
   );
 };
 

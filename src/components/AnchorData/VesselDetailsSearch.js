@@ -4,7 +4,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { API_URLS } from "../../config/urls";
 import Grid from "../Common/Grid";
 import DeleteConfirmationPopup from "../Common/DeleteConfirmationPopup";
-import "../../css/VesselDetailsSearch.css";
+
 
 const VesselDetailsSearch = () => {
   const [vesselName, setVesselName] = useState("");

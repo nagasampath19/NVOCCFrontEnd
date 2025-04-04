@@ -26,13 +26,31 @@ const RateDetails = () => {
   });
   const [errors, setErrors] = useState({});
   const [showPopup, setShowPopup] = useState(false);
+  const [currenciesOptions, setCurrenciesOptions] = useState([]);
+  const token = localStorage.getItem("token");
 
-   useEffect(() => {
-      if (location.state && location.state.chargeDetails) {
-        setRateDetails(location.state.chargeDetails);
-      }
-    }, [location.state]);
-  
+  useEffect(() => {
+    if (location.state && location.state.chargeDetails) {
+      setRateDetails(location.state.chargeDetails);
+    }
+    fetchAllCurrencies();
+  }, [location.state]);
+
+  const fetchAllCurrencies = async () => {
+    axios.post(`${API_URLS.BASE_URL}/blapi/anchordata/currencies`, {},
+      { headers: { 'Authorization': `Bearer ${token}` } })
+      .then(response => {
+        const options = response.data.map(charge => ({
+          value: charge.currency_id,
+          label: charge.currency_code
+        }));
+        setCurrenciesOptions(options);
+      })
+      .catch(error => {
+        console.error("Error fetching container size details:", error);
+      });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -40,7 +58,6 @@ const RateDetails = () => {
     if (Object.keys(validationErrors).length === 0) {
       setShowPopup(false);
       try {
-        const token = localStorage.getItem("token");
         const userId = getUserIdFromToken();
         const chargeDetails = { ...rateDetails, user_id: userId };
         await axios.post(`${API_URLS.BASE_URL}/blapi/Anchordata/Charges/savechargesdetails`, chargeDetails, {
@@ -49,7 +66,7 @@ const RateDetails = () => {
           }
         });
         const searchParams = location.state?.searchParams || {};
-        navigate("/rate-details-search", { state: { updatedChargeDetails: chargeDetails,searchParams } });
+        navigate("/rate-details-search", { state: { updatedChargeDetails: chargeDetails, searchParams } });
       } catch (error) {
         console.error("Error saving charge details: ", error);
         // Handle error (e.g., show an error message)
@@ -60,13 +77,13 @@ const RateDetails = () => {
   };
 
   const getUserIdFromToken = () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const decodedToken = jwtDecode(token);
-        return decodedToken.user_id;
-      }
-      return null;
-    };
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.user_id;
+    }
+    return null;
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -127,15 +144,19 @@ const RateDetails = () => {
         </div>
         <div className="form-group">
           <label htmlFor="chargecurrency">Currency</label>
+
           <select
             id="chargecurrency"
-            value={rateDetails.chargecurrency}
+            value={rateDetails.chargecurrency || "Select"}
             onChange={handleChange}
             className="form-control"
           >
-            <option value="INR">INR</option>
-            <option value="USD">USD</option>
-            <option value="Other">Other</option>
+            <option value="0">Select</option>
+            {currenciesOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="form-group">
@@ -157,18 +178,18 @@ const RateDetails = () => {
               <input
                 type="radio"
                 name="chargegst"
-                value="yes"
-                checked={rateDetails.chargegst === "yes"}
-                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "yes" }))}
+                value="Y"
+                checked={rateDetails.chargegst === "Y"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "Y" }))}
               /> Yes
             </label>
             <label>
               <input
                 type="radio"
                 name="chargegst"
-                value="no"
-                checked={rateDetails.chargegst === "no"}
-                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "no" }))}
+                value="N"
+                checked={rateDetails.chargegst === "N"}
+                onChange={() => setRateDetails((prevDetails) => ({ ...prevDetails, chargegst: "N" }))}
               /> No
             </label>
           </div>

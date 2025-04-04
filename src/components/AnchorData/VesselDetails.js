@@ -3,7 +3,6 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import ValidationPopup from "../Common/ValidationPopup";
 import { API_URLS } from "../../config/urls";
-import "../../css/VesselDetails.css"; 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
